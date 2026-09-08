@@ -31,7 +31,6 @@ requires_quantized=(
     "qwen2.5"
     "llama3.1"
     "ministral-3"
-    "olmo-3"
 )
 
 # ============================================================
@@ -39,8 +38,8 @@ requires_quantized=(
 # ============================================================
 
 datasets=(
-    # "kinship_v2"
-    # "mquake_single"
+    "kinship"
+    "mquake_single"
     "mquake_multi"
     # "metaqa"
 )
@@ -50,10 +49,10 @@ declare -A dataset_max_steps
 declare -A dataset_max_actions
 declare -A dataset_context_window
 
-dataset_hops["kinship_v2"]="n"
-dataset_max_steps["kinship_v2"]=3
-dataset_max_actions["kinship_v2"]=100
-dataset_context_window["kinship_v2"]=$((8 * 1024))
+dataset_hops["kinship"]="n"
+dataset_max_steps["kinship"]=3
+dataset_max_actions["kinship"]=100
+dataset_context_window["kinship"]=$((8 * 1024))
 
 dataset_hops["mquake_single"]="n"
 dataset_max_steps["mquake_single"]=4
