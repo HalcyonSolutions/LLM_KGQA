@@ -192,3 +192,108 @@ This project is licensed under the Academic License.
 - [ ] Add support notes or adapters for additional KGQA datasets such as MetaQA and PathQuestion.
 - [x] Support datasets with optional entity/relation title mappings.
 - [x] Split shared LLM client logic from subgraph and navigation task clients.
+
+## Think-on-Graph baseline
+
+`kgqa_tog.py` adapts the original ToG Freebase algorithm to our local triples,
+entity/relation title maps, dataset rows, and LLM API client. Its reference is
+[ToG revision 7ccbb92](https://github.com/DataArcTech/ToG/tree/7ccbb92e17579f934bb778386230de47eca0ab67/ToG).
+The upstream prompt module is preserved verbatim in `model/tog_original_prompts.py`
+with its source revision. We use its Freebase relation, entity, reasoning,
+partial-evidence answer, and question-only CoT templates.
+
+The default flow is bidirectional relation pruning, per-relation entity scoring,
+global beam pruning by the current relation score times entity score, and
+reasoning over all retained triples across depths. The model's successful
+reasoning response is reused as the final answer. Neighborhoods of at least 20
+entities are randomly reduced to 5. Defaults are width 3, depth 3, exploration
+temperature 0.4, reasoning temperature 0, and 256 output tokens, matching the
+reference script. Entity-score count mismatches use uniform scores; score totals
+are not enforced. Relation parse failures produce no selected relations.
+
+Fallback behavior also follows upstream:
+
+- Successful sufficiency check: return that reasoning response and its answer.
+- No further candidates: answer using accumulated triples **and model knowledge**.
+- Depth exhausted without a successful stop: answer from the original CoT prompt
+  and question **without retrieved triples**.
+- No starting entities: use the same question-only fallback.
+
+Answers are free text and may refer to entities outside the local graph. Exact,
+unambiguous label/ID resolution against the full local title map is an optional
+postprocessing step; it never constrains generation and never uses gold answers.
+The original response is retained as `answer_reasoning`; its braced answer is
+extracted into `generated_answer`. `answer_source` and aggregate `answer_sources`
+distinguish reasoning, partial-evidence fallback, and knowledge-only fallback.
+Search traces remain stored even when the fallback does not consume them.
+
+Our framework reports **generated-answer Hits@1**: the extracted response matches
+the normalized gold answer text (including supplied text aliases), or its
+unambiguously resolved entity ID belongs to the gold entity set. Unresolved text
+can still be correct. Errors and unmatched responses count as zero. This is
+stricter than upstream's evaluation helper, which also accepts substring matches;
+we do not label the scores as an exact reproduction of the paper's evaluation.
+Terminal-entity accuracy, final-frontier beam hit rate, and top search-path
+fidelity remain separate diagnostics. The beam width is not an answer count.
+
+Remaining framework adaptations: local graph snapshot instead of SPARQL;
+one dataset `Source-Entity` in the runner; relation labels decorated with local
+IDs to disambiguate names; raw ID fallback for missing labels instead of
+Freebase unnamed-entity/metadata filters; deterministic neighborhood sampling;
+explicit association of previous direction with each unique frontier entity;
+and bounded API retries via our model backend. The supplied LLM and graph/data
+also differ from the original experiments. Search does not use answer annotations
+unless `--oracle-selectors` is explicitly enabled.
+
+Example:
+
+```bash
+python kgqa_tog.py --dataset mquake_single --llm-model qwen3 --use-instruct
+```
+
+Use `--max-depth 4` for four-hop experiments. `--temperature` overrides both stage
+temperatures; `--no-bidirectional` and `--disable-early-stop` are ablations.
+`--structured-output` is rejected because it conflicts with the original text
+prompts. The legacy `--max-parse-retries` flag now controls failed API/text-response
+retries only, not semantic score retries. A no-API smoke check is:
+
+```bash
+python kgqa_tog.py --oracle-selectors --max-depth 4 --max-questions 5 \
+  --result-dir /tmp/tog-smoke
+```
+
+New outputs use `results_v4_...`, `method_version=tog_original_local_v4`, and a
+pinned `upstream_commit`. Old unversioned terminal-entity scores and v2 restricted
+entity-answer scores must be rerun. `compare_navigation_tog.py` rejects mixing
+ToG method versions or answer metrics across beam-width conditions.
+
+### Formatting tolerance and audit trail
+
+The original prompts and fallback policy are unchanged. `utils/tog_parsing.py`
+adds a versioned, gold-independent formatting adapter. Scored relation selections
+can use braces, Markdown, parenthesized/bracketed IDs, or an unambiguous exact
+relation label. IDs must belong to the available options. Unknown IDs, ambiguous
+labels, duplicate choices, and invalid scores are rejected rather than guessed.
+
+Answers can be braced, bare, in an explicit final-answer clause, or a final
+asserted bold value. Arbitrary mentions elsewhere in the explanation are not
+answers; ambiguity/refusal is not resolved by looking at the gold text. A plain
+or Markdown leading Yes/No is accepted for sufficiency. Entity IDs can be resolved
+from an exact label, ID, or a consistent label-plus-ID pair in the full graph map.
+Correctness is still evaluated after extraction with the existing exact matcher;
+we do not use upstream-style unrestricted substring credit.
+
+Calls retain their raw output and `parsing`/`answer_parsing` metadata. Episodes
+include `formatting_events`, `answer_parsing`, and `entity_resolution`; aggregate
+`formatting_counts` reports strict, tolerant, rejected, and fallback events.
+Counts describe parser events, not necessarily failed questions. Uniform scoring
+fallbacks are explicitly logged. Relation events include the selected ID,
+direction, score, and original line. Answer events record the extraction method
+and resulting answer. `parser_version` records the adapter version.
+
+`audit_tog_formatting.py INPUT --output OUTPUT` replays answer extraction into a
+separate diagnostic artifact, retaining old and new predictions. It does not
+rewrite the run, rerun search, or estimate accuracy of navigation that would have
+changed under the new parser. The saved Ministral audit is in
+`results/analysis/ministral_v3_formatting_audit.json`. Rerun navigation to assess
+relation-formatting fixes. Old v3 results must not be mixed with v4 runs.
