@@ -42,8 +42,8 @@ def parse_args():
     parser.add_argument("--max-questions", type=int)
     parser.add_argument("--width", type=int, default=3)
     parser.add_argument("--max-depth", type=int, default=3)
-    parser.add_argument("--bidirectional", action=argparse.BooleanOptionalAction, default=True,
-                        help="Search both directions (default); --no-bidirectional is an ablation")
+    parser.add_argument("--bidirectional", action="store_true",
+                        help="Search both directions (default); --bidirectional is an ablation")
     parser.add_argument("--structured-output", action="store_true")
     parser.add_argument("--neighborhood-threshold", type=int, default=20)
     parser.add_argument("--num-retain-entity", type=int, default=5)
