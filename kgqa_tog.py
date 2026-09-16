@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument("--width", type=int, default=3)
     parser.add_argument("--max-depth", type=int, default=3)
     parser.add_argument("--bidirectional", action="store_true",
-                        help="Search both directions (default); --bidirectional is an ablation")
+                        help="Search both directions instead of only outgoing edges. By default, our implementation uses only outgoing edges.")
     parser.add_argument("--structured-output", action="store_true")
     parser.add_argument("--neighborhood-threshold", type=int, default=20)
     parser.add_argument("--num-retain-entity", type=int, default=5)
@@ -229,7 +229,7 @@ def main():
         )
 
     episodes = []
-    top1_scores = []
+    generated_answer_scores = []
     beam_scores = []
     path_scores = []
     wall_times = []
@@ -366,7 +366,7 @@ def main():
             total_tokens = sum_call_field(episode_calls, "total_tokens")
             api_retries = sum(int(call.get("attempt", 0) > 0) for call in episode_calls)
 
-            top1_scores.append(answer_score)
+            generated_answer_scores.append(answer_score)
             beam_scores.append(beam_score)
             if path_score is not None:
                 path_scores.append(path_score)
@@ -446,10 +446,13 @@ def main():
             }
             episodes.append(episode)
 
-            top1_correct = sum(score["Hits1"] for score in top1_scores)
             beam_correct = sum(score["Hits1"] for score in beam_scores)
+            generated_correct = sum(
+                score["Hits1"] for score in generated_answer_scores
+            )
+
             progress.set_description(
-                f"ToG top1={int(top1_correct)}/{len(top1_scores)} "
+                f"ToG answer={int(generated_correct)}/{len(generated_answer_scores)} "
                 f"beam={int(beam_correct)}/{len(beam_scores)}"
             )
 
@@ -460,7 +463,7 @@ def main():
                     status: sum(event["status"] == status for ep in episodes for event in ep["formatting_events"])
                     for status in ("strict", "tolerant", "rejected", "fallback")
                 },
-                "top1": aggregate_answer_metrics(top1_scores),
+                "generated_answer": aggregate_answer_metrics(generated_answer_scores),
                 "terminal_entity": aggregate_answer_metrics([
                     ep["final_entity_score"] for ep in episodes
                 ]),
@@ -505,8 +508,12 @@ def main():
 
     grapher.clear_relation_index()
     print(
-        f"Top-1 accuracy: {statistics['top1']['correct']}/{statistics['questions']} | "
-        f"Beam Hits@{args.width}: {statistics['beam']['correct']}/{statistics['questions']}"
+        f"Generated-answer accuracy: "
+        f"{statistics['generated_answer']['correct']}/{statistics['questions']} | "
+        f"Terminal Hits@1: "
+        f"{statistics['terminal_entity']['correct']}/{statistics['questions']} | "
+        f"Beam Hits@{args.width}: "
+        f"{statistics['beam']['correct']}/{statistics['questions']}"
     )
     print(
         f"LLM calls: {statistics['actual_llm_calls_total']} "

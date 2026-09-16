@@ -169,7 +169,7 @@ class OriginalToGTests(unittest.TestCase):
                               'The answer is {Outside graph}.'])
         with tempfile.TemporaryDirectory() as directory:
             argv = ['kgqa_tog.py', '--max-depth', '2', '--disable-early-stop',
-                    '--no-bidirectional', '--result-dir', directory]
+                     '--result-dir', directory]
             with patch.object(sys, 'argv', argv), \
                  patch.object(kgqa_tog, 'load_triplets', return_value=pd.DataFrame(triples)), \
                  patch.object(kgqa_tog, 'load_pandas', return_value=qa), \
