@@ -202,6 +202,7 @@ def main():
         "upstream_reference": f"https://github.com/DataArcTech/ToG/tree/{UPSTREAM_COMMIT}/ToG",
         "upstream_commit": UPSTREAM_COMMIT,
         "parser_version": PARSER_VERSION,
+        "tog_prompt_family": "upstream_freebase_prompts",
         "answer_matcher": "exact_normalized_text_or_unambiguous_entity_id",
         "beam_metric": f"Hits@{args.width}",
     }

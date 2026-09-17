@@ -4,8 +4,17 @@ import re
 from typing import Sequence
 
 from model.base_llm_client import BaseLLMKGQAClient
+# DO NOT use the *_wiki prompts here. They expect the original ToG
+# Wikidata relation representation (e.g., wiki.relation.*) and its
+# corresponding normalization/parsing logic. This adapter instead exposes
+# relations as human-readable labels with Wikidata P-IDs (e.g., "country [P17]").
+# Using the Wiki prompt family therefore causes relation parsing/search failures.
+# Use the original ToG prompt family below.
 from model.tog_original_prompts import (
-    answer_prompt, cot_prompt, extract_relation_prompt, prompt_evaluate,
+    cot_prompt,
+    answer_prompt,  
+    extract_relation_prompt, 
+    prompt_evaluate,
     score_entity_candidates_prompt,
 )
 from utils.kgqa_types import TripletList
