@@ -124,8 +124,7 @@ See [docs/navigation.md](docs/navigation.md) for prompting, memory, action-selec
 ```bash
 python ./kgqa_tog.py \
   --dataset mquake_single \
-  --llm-model qwen3 \
-  --use-instruct
+  --model-config configs/models/qwen3.json
 ```
 
 The local adapter preserves the upstream ToG prompt family while adapting graph access, entity/relation mappings, evaluation, and result logging to this repository.
