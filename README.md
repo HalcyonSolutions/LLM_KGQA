@@ -49,7 +49,23 @@ This project requires Python 3.12 or higher.
 pip install -r requirements.txt
 ```
 
-The scripts expect an API configuration in `configs/openwebui_config.json`.
+### API Configuration
+
+A configuration template is provided at:
+
+```text
+configs/openwebui_template.json
+```
+
+Before running the experiments, make a copy of the template named:
+
+```text
+configs/openwebui_config.json
+```
+
+Then edit `configs/openwebui_config.json` and fill in the missing connection information for your selected backend.
+
+The configuration supports either direct Ollama access or Open WebUI through the backend field. For Open WebUI, provide the server address and API key. For Ollama, provide the Ollama server URL.
 
 ## Data Layout
 
