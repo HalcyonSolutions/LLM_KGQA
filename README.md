@@ -2,32 +2,44 @@
 
 ## Overview
 
-This project runs Large Language Model (LLM) experiments for Knowledge Graph Question Answering (KGQA). It supports two task styles:
+This repository is the **official implementation** for the paper **“The Path Matters: Evaluating Small Language Models Beyond Answer Accuracy in KGQA”** by Eduin E. Hernandez, Sergio A. Diaz, Luis F. Garcia, Nurassyl Askar, and Stefano Rini.
 
-- **Subgraph QA**: provide the LLM with a sampled subgraph and ask for the final answer.
-- **Iterative navigation QA**: let the LLM choose graph actions step by step while the controller validates and executes only legal KG edges.
+The paper evaluates frozen, locally deployable small language models (SLMs) as question-conditioned graph-navigation policies, measuring terminal-answer accuracy together with executed-path fidelity. It also includes a secondary Think-on-Graph (ToG)-style comparison to study the effect of explicit search and answer-generation scaffolding.
 
-The current runners are `kgqa_subgraph.py` and `kgqa_navigation.py`.
+The repository contains the following KGQA workflows:
+
+- **Iterative navigation QA**: let the LLM choose graph actions step by step while the controller validates and executes only legal KG edges. This is the primary experimental setting used in the paper.
+- **Think-on-Graph (ToG)**: adapt the original ToG search procedure to the local KGQA datasets and graph representation for the paper's secondary search comparison.
+- **Subgraph QA**: provide the LLM with a sampled subgraph and ask for the final answer. These utilities are retained from the broader KGQA codebase.
+
+The main runners are `kgqa_navigation.py`, `kgqa_tog.py`, and `kgqa_subgraph.py`.
 
 ## Project Structure
 
+- `analysis/`: result compilation, diagnostics, comparisons, and plotting utilities.
 - `configs/`: API/backend configuration files.
-- `data/`: KGQA datasets.
+- `data/`: local KGQA dataset files.
 - `model/`: shared base client and task-specific LLM clients.
-- `results/`: JSON outputs from experiment runs.
-- `utils/`: shared typing, graph, metric, KGQA, and API utilities.
-- `scripts/`: helper scripts for experiments and sanity checks.
+- `results/`: JSON outputs and derived experiment artifacts.
+- `scripts/`: Bash scripts for experiment runs, samples, sanity checks, and reproducibility checks.
+- `tests/`: unit, integration, and behavior tests.
+- `tools/`: standalone Python debugging and development utilities.
+- `utils/`: reusable graph, metric, KGQA, parsing, and API utilities.
 
 ## Key Files
 
-- `kgqa_navigation.py`: iterative graph-navigation KGQA runner.
+- `kgqa_navigation.py`: iterative graph-navigation KGQA runner used for the paper's primary experiments.
+- `kgqa_tog.py`: local Think-on-Graph baseline runner used for the paper's secondary search comparison.
 - `kgqa_subgraph.py`: subgraph-at-once KGQA runner.
 - `model/base_llm_client.py`: shared LLM client logic.
 - `model/navigation_llm_client.py`: navigation-specific prompt, parsing, and control logic.
 - `model/subgraph_llm_client.py`: subgraph-specific prompt and prediction logic.
+- `model/tog_llm_client.py`: ToG-specific LLM interaction and selection logic.
 - `utils/kgqa_utils.py`: shared KGQA helpers, including optional title-map loading.
 - `utils/kgqa_types.py`: shared KGQA type aliases.
 - `utils/kgqa_navigation_metrics.py`: navigation answer/path metrics.
+- `utils/tog_search.py`: local ToG graph-search implementation.
+- `utils/tog_parsing.py`: ToG response parsing and formatting-tolerance utilities.
 
 ## Installation
 
@@ -52,6 +64,12 @@ Encoded datasets such as MQuAKE may also include:
 - `relation_data.csv`
 
 These mapping files are optional. If they are missing, as in unencoded datasets such as `kinship`, the runners assume entity and relation strings are already readable and omit title mappings from prompts.
+
+### Datasets Used in the Paper
+
+The paper evaluates the navigation-ready **KINSHIP** and **MQuAKE-ST** resources, including the Single Answer and Multi Answer MQuAKE-ST settings. The dataset releases, preparation details, and associated THESEUS resources are maintained in the [THESEUS repository](https://github.com/HalcyonSolutions/THESEUS).
+
+For reproducing the paper experiments, use the dataset versions distributed through THESEUS rather than reconstructing them from the generic layout description above.
 
 ## Usage
 
@@ -114,6 +132,27 @@ Subgraph sampling modes:
 
 Use `-r` / `--retrieve` for non-oracle retrieval from the source node.
 
+### Experiment and Utility Scripts
+
+Commands are intended to be run from the repository root.
+
+Experiment shell scripts are under `scripts/`, for example:
+
+```bash
+bash scripts/kgqa_navigation_runs.sh
+bash scripts/kgqa_tog_runs.sh
+bash scripts/kgqa_navigation_samples.sh
+```
+
+Result-analysis utilities are under `analysis/`, for example:
+
+```bash
+python analysis/compile_navigation_results.py --dataset kinship
+python analysis/plot_metric.py --dataset mquake
+```
+
+Development and debugging utilities are under `tools/`, while automated and integration tests are kept under `tests/`.
+
 ## Results
 
 Results are saved under `results/<dataset>/`.
@@ -140,14 +179,6 @@ Subgraph outputs include:
 - Navigation uses the terminal graph entity as the prediction.
 - `first` and `question-aware` are deterministic; `random` is reproducible for the same seed, question, step, stage, and current entity.
 - No answer-type hints are added to prompts.
-
-## License
-
-This project is licensed under the Academic License.
-
-## TODO
-
-The repo todo list is in `TODO.md`.
 
 ## Think-on-Graph baseline
 
@@ -220,8 +251,8 @@ python kgqa_tog.py --oracle-selectors --max-depth 4 --max-questions 5 \
 
 New outputs use `results_v4_...`, `method_version=tog_original_local_v4`, and a
 pinned `upstream_commit`. Old unversioned terminal-entity scores and v2 restricted
-entity-answer scores must be rerun. `compare_navigation_tog.py` rejects mixing
-ToG method versions or answer metrics across beam-width conditions.
+entity-answer scores must be rerun. `analysis/compare_navigation_tog.py` rejects
+mixing ToG method versions or answer metrics across beam-width conditions.
 
 ### Formatting tolerance and audit trail
 
@@ -247,9 +278,13 @@ fallbacks are explicitly logged. Relation events include the selected ID,
 direction, score, and original line. Answer events record the extraction method
 and resulting answer. `parser_version` records the adapter version.
 
-`audit_tog_formatting.py INPUT --output OUTPUT` replays answer extraction into a
+`python analysis/audit_tog_formatting.py INPUT --output OUTPUT` replays answer extraction into a
 separate diagnostic artifact, retaining old and new predictions. It does not
 rewrite the run, rerun search, or estimate accuracy of navigation that would have
 changed under the new parser. The saved Ministral audit is in
 `results/analysis/ministral_v3_formatting_audit.json`. Rerun navigation to assess
 relation-formatting fixes. Old v3 results must not be mixed with v4 runs.
+
+## License
+
+This project is licensed under the Academic License.
