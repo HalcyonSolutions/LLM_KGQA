@@ -138,9 +138,9 @@ def build_profile(export_path: Path, raw: Any) -> dict[str, Any]:
         "variant": {
             "instruction_tuned": None,
             "quantization": {
-                "enabled": quantization_level is not None,
+                "enabled": bits is not None,
                 "bits": bits,
-                "format": quantization_level,
+                "format": quantization_level if bits is not None else None,
             },
         },
         "capabilities": {
