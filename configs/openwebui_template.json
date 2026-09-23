@@ -1,0 +1,6 @@
+{
+  "backend": "ollama",
+  "ollama_url": "http://localhost:11434",
+  "base_url": "http://<IP_ADDRESS>:8080",
+  "api_key": "sk-<OPENWEBUI_API_KEY>"
+}
