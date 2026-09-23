@@ -9,7 +9,11 @@ from pathlib import Path
 
 from tqdm import tqdm
 
-from model.constants import valid_models
+from model.model_config import (
+    load_model_profile,
+    model_result_config,
+    validate_runtime_settings,
+)
 from model.tog_llm_client import ToGLLMKGQAClient
 from model.tog_original_prompts import UPSTREAM_COMMIT
 from utils.tog_parsing import PARSER_VERSION
@@ -50,10 +54,10 @@ def parse_args():
     parser.add_argument("--disable-early-stop", action="store_true")
     parser.add_argument("--oracle-selectors", action="store_true", help="Use annotations for a no-API integration smoke test")
     parser.add_argument("--fail-fast", action="store_true", help="Stop instead of recording a failed question")
-    parser.add_argument("--llm-model", choices=valid_models, default="gemma3")
-    parser.add_argument("--use-instruct", action="store_true")
-    parser.add_argument("--use-quantized", action="store_true")
-    parser.add_argument("--quantization-bits", type=int, default=4)
+    parser.add_argument("--model-config", default="configs/models/gemma3.json",
+                        help="Path to a validated model profile JSON file.")
+    parser.add_argument("--model-id",
+                        help="Optional backend model ID override for this server.")
     parser.add_argument("--context-window", type=int, default=4096)
     parser.add_argument("--max-output-tokens", type=int, default=256)
     parser.add_argument("--temperature", type=float, default=None,
@@ -174,12 +178,24 @@ def main():
 
     output_dir = os.path.join(args.result_dir, args.dataset)
     os.makedirs(output_dir, exist_ok=True)
-    model_name = "oracle-smoke" if args.oracle_selectors else args.llm_model
-    if not args.oracle_selectors and args.use_instruct:
-        model_name += "-instruct"
-        if args.use_quantized:
-            model_name += f"-q{args.quantization_bits}"
-    model_name = model_name.replace("/", "-").replace(":", "-")
+
+    model_profile = None
+    if args.oracle_selectors:
+        model_name = "oracle-smoke"
+    else:
+        model_profile = load_model_profile(args.model_config)
+        validate_runtime_settings(
+            model_profile,
+            context_window=args.context_window,
+            structured_output=args.structured_output,
+        )
+        config.update(
+            model_result_config(
+                model_profile,
+                backend_model_id=client.model_choice,
+            )
+        )
+        model_name = model_profile.result_name
     structured = "structured" if args.structured_output else "unstructured"
     direction = "bidirectional" if args.bidirectional else "outgoing"
     stopping = "noearlystop" if args.disable_early_stop else "earlystop"
@@ -192,6 +208,14 @@ def main():
         f"{question_limit}_seed{args.seed}.json",
     )
     config = vars(args) | {
+        **(
+            model_result_config(
+                model_profile,
+                backend_model_id=args.model_id or model_profile.model_id,
+            )
+            if model_profile is not None
+            else {"model": "oracle-smoke", "model_profile_name": "oracle-smoke"}
+        ),
         "title_mapping": mapping_status,
         "graph_directionality": "bidirectional" if args.bidirectional else "outgoing",
         "method_version": "tog_original_local_v4",
@@ -211,10 +235,8 @@ def main():
     if not args.oracle_selectors:
         client = ToGLLMKGQAClient(
             Path(__file__).parent / "configs" / "openwebui_config.json",
-            model_choice=args.llm_model,
-            use_instruct=args.use_instruct,
-            use_quantized=args.use_quantized,
-            quantization_bits=args.quantization_bits,
+            model_profile=model_profile,
+            model_id=args.model_id,
             context_window=args.context_window,
             seed=args.seed,
             temperature=args.reasoning_temperature,

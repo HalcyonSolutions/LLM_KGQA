@@ -14,7 +14,11 @@ from pathlib import Path
 from tqdm import tqdm
 
 from model.navigation_llm_client import NavigationLLMKGQAClient
-from model.constants import valid_models
+from model.model_config import (
+    load_model_profile,
+    model_result_config,
+    validate_runtime_settings,
+)
 from utils.basic import extract_literals, load_pandas, load_triplets
 from utils.graph_utils import Grapher, build_outgoing_index
 from utils.kgqa_data_utils import (
@@ -106,15 +110,10 @@ def parse_args():
                         help='Process only the questions at these indices (0-based). Overrides --max-questions.')
 
     # LLM parameters
-    parser.add_argument('--llm-model', type=str, default='gemma3',
-                        choices=valid_models,
-                        help='Model ID to use for the LLM API.')
-    parser.add_argument('--use-instruct', action='store_true',
-                        help='Whether to use the instruction-tuned version of the model.')
-    parser.add_argument('--use-quantized', action='store_true',
-                        help='Whether to use the quantized version of the model.')
-    parser.add_argument('--quantization-bits', type=int, default=4,
-                        help='Number of bits for quantization (if using quantized model).')
+    parser.add_argument('--model-config', type=str, default='configs/models/gemma3.json',
+                        help='Path to a validated model profile JSON file.')
+    parser.add_argument('--model-id', type=str, default=None,
+                        help='Optional backend model ID override for this server.')
     parser.add_argument('--context-window', type=int, default=4096,
                         help='Context window size for the LLM model.')
     parser.add_argument('--use-think', action='store_true',
@@ -254,13 +253,18 @@ if __name__ == '__main__':
 
     qa_df = qa_df.reset_index(drop=False).rename(columns={'index': 'dataframe_index'})
 
+    model_profile = load_model_profile(args.model_config)
+    validate_runtime_settings(
+        model_profile,
+        context_window=args.context_window,
+        use_think=args.use_think,
+        structured_output=args.structured_output,
+    )
     config_path = Path(__file__).with_name('openwebui_config.json').parent / 'configs' / 'openwebui_config.json'
     client = NavigationLLMKGQAClient(
         config_path,
-        model_choice=args.llm_model,
-        use_instruct=args.use_instruct,
-        use_quantized=args.use_quantized,
-        quantization_bits=args.quantization_bits,
+        model_profile=model_profile,
+        model_id=args.model_id,
         context_window=args.context_window,
         seed=args.seed,
         temperature=args.temperature,
@@ -519,11 +523,7 @@ if __name__ == '__main__':
 
     result_path = os.path.join(args.result_dir, args.dataset, args.prompting_approach.replace('-', '_'))
     os.makedirs(result_path, exist_ok=True)
-    model_name = args.llm_model
-    if args.use_instruct:
-        model_name += '-instruct'
-        if args.use_quantized:
-            model_name += f'-q{args.quantization_bits}'
+    model_name = model_profile.result_name
 
     question_limit_suffix = f"_questions{len(qa_df)}" if args.max_questions is not None else ''
     hybrid_suffix = f"_hybrid{args.hybrid_threshold}" if args.navigation_approach == 'hybrid' else ''
@@ -539,10 +539,10 @@ if __name__ == '__main__':
 
     payload = {
         'config': {
-            'model': args.llm_model,
-            'use_instruct': args.use_instruct,
-            'use_quantized': args.use_quantized,
-            'quantization_bits': args.quantization_bits,
+            **model_result_config(
+                model_profile,
+                backend_model_id=client.model_choice,
+            ),
             'context_window': args.context_window,
             'temperature': args.temperature,
             'timeout': args.timeout,

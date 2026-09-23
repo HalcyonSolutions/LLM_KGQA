@@ -12,7 +12,11 @@ from pathlib import Path
 
 from tqdm import tqdm
 from model.subgraph_llm_client import SubgraphLLMKGQAClient
-from model.constants import valid_models
+from model.model_config import (
+    load_model_profile,
+    model_result_config,
+    validate_runtime_settings,
+)
 
 from utils.basic import load_triplets, load_pandas, extract_literals
 from utils.kgqa_utils import compare_answers, extract_final_answer, load_title_maps
@@ -54,15 +58,10 @@ def parse_args():
                         help='Number of questions to process in a batch.')
 
     # LLM parameters
-    parser.add_argument('--llm-model', type=str, default='gemma3',
-                        choices=valid_models,
-                        help='Model ID to use for the LLM API.')
-    parser.add_argument('--use-instruct', action='store_true',
-                        help='Whether to use the instruction-tuned version of the model.')
-    parser.add_argument('--use-quantized', action='store_true',
-                        help='Whether to use the quantized version of the model.')
-    parser.add_argument('--quantization-bits', type=int, default=4,
-                        help='Number of bits for quantization (if using quantized model).')
+    parser.add_argument('--model-config', type=str, default='configs/models/gemma3.json',
+                        help='Path to a validated model profile JSON file.')
+    parser.add_argument('--model-id', type=str, default=None,
+                        help='Optional backend model ID override for this server.')
     parser.add_argument('--context-window', type=int, default=4096,
                         help='Context window size for the LLM model.')
     parser.add_argument('--timeout', type=int, default=120,
@@ -182,14 +181,17 @@ if __name__ == '__main__':
     
 
     # prepare client
+    model_profile = load_model_profile(args.model_config)
+    validate_runtime_settings(
+        model_profile,
+        context_window=args.context_window,
+    )
     CONFIG_PATH = Path(__file__).with_name("openwebui_config.json").parent / "configs" / "openwebui_config.json"
 
     client = SubgraphLLMKGQAClient(
         CONFIG_PATH,
-        model_choice=args.llm_model,
-        use_instruct=args.use_instruct,
-        use_quantized=args.use_quantized,
-        quantization_bits=args.quantization_bits,
+        model_profile=model_profile,
+        model_id=args.model_id,
         context_window=args.context_window,
         seed=args.seed,
         temperature=args.temperature,
@@ -357,14 +359,15 @@ if __name__ == '__main__':
     # save the results as a JSON file
     result_path = os.path.join(args.result_dir, args.dataset)
     os.makedirs(result_path, exist_ok=True)
-    model_name = args.llm_model
-    if args.use_instruct:
-        model_name += "-instruct"
-        if args.use_quantized:
-            model_name += f"-q{args.quantization_bits}"
+    model_name = model_profile.result_name
     results_file = os.path.join(result_path, f"results_{args.hops}hop_{model_name}_subgraph{args.subgraph_size}_{'retrieve' if args.retrieve else 'oracle'}_{args.sampling_method}_seed{args.seed}.json")
     payload = {
         'config': {
+            **model_result_config(
+                model_profile,
+                backend_model_id=client.model_choice,
+            ),
+            'context_window': args.context_window,
             'dataset': args.dataset,
             'hop_split': args.hops,
             'data_dir': args.data_dir,

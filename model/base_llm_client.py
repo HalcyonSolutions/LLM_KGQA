@@ -5,12 +5,10 @@ from pathlib import Path
 
 import requests
 
-from model.constants import (
-    context_window_limits,
-    has_instruct_versions,
-    has_quantized_versions,
-    has_think_option,
-    valid_models,
+from model.model_config import (
+    ModelProfile,
+    resolve_backend_model_id,
+    validate_runtime_settings,
 )
 from typing import Dict, Tuple
 
@@ -116,10 +114,8 @@ class BaseLLMKGQAClient:
     def __init__(
         self,
         config_path: Path,
-        model_choice: str = "gemma3",
-        use_instruct: bool = False,
-        use_quantized: bool = False,
-        quantization_bits: int = 4,
+        model_profile: ModelProfile,
+        model_id: str | None = None,
         context_window: int = 4096,
         seed: int | None = None,
         temperature: float | None = None,
@@ -130,54 +126,21 @@ class BaseLLMKGQAClient:
         use_think: bool = False,
         debug: bool = False,
     ) -> None:
-        """
-        Initialize the LLM_KGQA_Client with configuration.
+        """Initialize the shared KGQA LLM client from a validated model profile."""
+        validate_runtime_settings(
+            model_profile,
+            context_window=context_window,
+            use_think=use_think,
+        )
 
-        Args:
-            config_path (Path): Path to the configuration file.
-            model_choice (str): Default model to use for the LLM API.
-            use_instruct (bool): Whether to use the instruction-tuned version of the model.
-            use_quantized (bool): Whether to use the quantized version of the model.
-            quantization_bits (int): Number of bits for quantization (if using quantized model).
-            context_window (int): Context window size for the model.
-            seed (int | None): Optional random seed for the requests.
-            temperature (float | None): Optional sampling temperature for the requests.
-            timeout (int): Timeout in seconds for LLM API requests.
-            connect_timeout (int): Connection-establishment timeout in seconds.
-            timeout_cooldown (float): Grace period after a read timeout.
-            max_output_tokens (int | None): Maximum generation length.
-            use_think (bool): Whether to enable "think" mode for the LLM API.
-            debug (bool): Enable debug mode for verbose output.
-        """
-        if model_choice not in valid_models:
-            raise ValueError(
-                f"Invalid model choice: {model_choice}. Valid options are: {valid_models}"
-            )
+        requested_model_id = resolve_backend_model_id(model_profile, model_id)
+        think_option = use_think if model_profile.supports_thinking else None
 
-        if context_window > context_window_limits.get(model_choice, 4096):
-            raise ValueError(
-                f"Context window {context_window} exceeds limit for model {model_choice} "
-                f"({context_window_limits.get(model_choice)})."
-            )
-
-        can_think = has_think_option.get(model_choice, False)
-        think_option = None # model does not support think by default
-        if can_think: # if the model supports think, we can set it to True or False based on user input
-            think_option = use_think
-        elif use_think:
-            raise ValueError(
-                f"Model {model_choice} does not support the 'think' option."
-            )
-
-        model_name = model_choice
-        if use_instruct and has_instruct_versions.get(model_choice, False):
-            model_name += ":instruct"
-            if use_quantized and has_quantized_versions.get(model_choice, False):
-                model_name += f"-q{quantization_bits}"
-
-        self.use_instruct = use_instruct
-        self.use_quantized = use_quantized
-        self.quantization_bits = quantization_bits
+        self.model_profile = model_profile
+        self.backend_model_id = requested_model_id
+        self.use_instruct = model_profile.instruction_tuned
+        self.use_quantized = model_profile.quantized
+        self.quantization_bits = model_profile.quantization_bits
         self.timeout = timeout
         self.connect_timeout = connect_timeout
         self.timeout_cooldown = timeout_cooldown
@@ -202,7 +165,7 @@ class BaseLLMKGQAClient:
         if self.debug:
             self._log_available_models()
 
-        self.change_llm(model_name)
+        self.change_llm(requested_model_id)
 
         self._closed = False
         self._cleanup_lock = threading.Lock()
