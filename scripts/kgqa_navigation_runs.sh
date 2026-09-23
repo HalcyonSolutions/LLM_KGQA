@@ -13,7 +13,6 @@ models=(
     "llama3.1"
     "granite3.3"
     "ministral-3"
-    # "deepseek-r1"
     "olmo-3"
     "phi4-mini"
 )
@@ -41,7 +40,6 @@ datasets=(
     "kinship"
     "mquake_single"
     "mquake_multi"
-    # "metaqa"
 )
 
 declare -A dataset_hops

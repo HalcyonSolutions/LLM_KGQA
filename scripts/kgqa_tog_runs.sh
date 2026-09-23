@@ -9,7 +9,7 @@ set -euo pipefail
 # Top-performing SLMs selected from the local-navigation
 # MQuAKE-ST Single results.
 models=(
-    # "ministral-3"
+    "ministral-3"
     "qwen3"
     "gemma4"
 )

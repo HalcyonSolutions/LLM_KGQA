@@ -56,3 +56,56 @@ python ./kgqa_navigation.py \
     --memory-approach full \
     --prompting-approach zero-shot \
     --timeout 15
+
+python ./kgqa_navigation.py \
+    --dataset mquake_multi \
+    --hops n \
+    --max-navigation-steps 4 \
+    --n-shots 1 \
+    --demo-history-mode full \
+    --demo-max-actions 5 \
+    --max-actions 200 \
+    --context-window 32768 \
+    --llm-model gemma4 \
+    --structured-output \
+    --navigation-approach tuple \
+    --memory-approach full \
+    --prompting-approach one-shot \
+    --timeout 15 \
+    --max-questions 10 
+
+python ./kgqa_navigation.py \
+    --dataset mquake_single \
+    --hops n \
+    --max-navigation-steps 4 \
+    --n-shots 1 \
+    --demo-history-mode full \
+    --demo-max-actions 5 \
+    --max-actions 200 \
+    --context-window 32768 \
+    --llm-model deepseek-r1 \
+    --navigation-approach tuple \
+    --memory-approach full \
+    --prompting-approach one-shot \
+    --timeout 15
+
+python kgqa_tog.py \
+    --dataset mquake_single \
+    --hops n \
+    --split test \
+    --llm-model ministral-3 \
+    --width 3 \
+    --max-depth 4 \
+    --bidirectional \
+    --neighborhood-threshold 20 \
+    --num-retain-entity 5 \
+    --context-window 32768 \
+    --max-output-tokens 256 \
+    --temperature 0 \
+    --seed 42 \
+    --timeout 15 \
+    --connect-timeout 5 \
+    --max-parse-retries 0 \
+    --checkpoint-every 10 \
+    --result-dir ./results/tog \
+    --max-questions 10
