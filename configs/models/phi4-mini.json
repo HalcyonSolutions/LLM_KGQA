@@ -1,14 +1,34 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "name": "phi4-mini",
-  "model": {"id": "phi4-mini", "family": "phi4-mini"},
+  "model": {
+    "id": "phi4-mini",
+    "family": "phi4-mini",
+    "parameter_size": null
+  },
   "source": {},
+  "runtime": {
+    "provider": null,
+    "connection_type": null
+  },
+  "artifact": {
+    "format": null,
+    "digest": null,
+    "size_bytes": null
+  },
   "variant": {
     "instruction_tuned": false,
-    "quantization": {"enabled": false, "bits": null, "format": null}
+    "quantization": {
+      "enabled": false,
+      "bits": null,
+      "format": null
+    }
   },
   "capabilities": {
     "context_window": 131072,
+    "embedding_length": null,
+    "completion": null,
+    "tools": null,
     "thinking": false,
     "structured_output": true
   }

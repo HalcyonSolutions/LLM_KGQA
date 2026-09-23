@@ -1,14 +1,34 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "name": "olmo-3-instruct",
-  "model": {"id": "olmo-3:instruct", "family": "olmo-3"},
+  "model": {
+    "id": "olmo-3:instruct",
+    "family": "olmo-3",
+    "parameter_size": null
+  },
   "source": {},
+  "runtime": {
+    "provider": null,
+    "connection_type": null
+  },
+  "artifact": {
+    "format": null,
+    "digest": null,
+    "size_bytes": null
+  },
   "variant": {
     "instruction_tuned": true,
-    "quantization": {"enabled": false, "bits": null, "format": null}
+    "quantization": {
+      "enabled": false,
+      "bits": null,
+      "format": null
+    }
   },
   "capabilities": {
     "context_window": 65536,
+    "embedding_length": null,
+    "completion": null,
+    "tools": null,
     "thinking": false,
     "structured_output": true
   }
