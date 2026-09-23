@@ -40,7 +40,7 @@
 ### Data And Architecture
 
 - [ ] Add a dataset preprocessing/download script that fetches the supported datasets from Hugging Face (or a configured mirror) and materializes the required files under `./data/<dataset_name>/` using the repository's expected dataset structure.
-- [ ] Replace hard-coded per-model constants and parameter definitions with model card/config files referenced at runtime, and add sanity checks that validate required fields and parameter compatibility before launching a run.
+- [x] Replace hard-coded per-model constants and parameter definitions with validated model profile files referenced at runtime, including sanity checks for required fields, context limits, capabilities, and backend model resolution.
 - [ ] Add dataset compatibility checks for required columns and optional fields before launching long runs.
 - [ ] Allow configurable title-map column names, such as `QID`/`Property` or `EID`/`RID`, for datasets like MetaQA.
 - [x] Decide whether navigation parsing should accept JSON responses with `action` and `stop` plus extra fields, or continue requiring the exact schema.
