@@ -1,4 +1,10 @@
 import unittest
+import os
+import sys
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT_DIR)
+
 from utils.tog_parsing import parse_relations, parse_answer, parse_sufficiency
 
 

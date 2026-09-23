@@ -1,6 +1,11 @@
 """Regression checks for ToG search semantics and original answer/fallback behavior."""
 import unittest
 from unittest.mock import Mock
+import os
+import sys
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT_DIR)
 
 from model.tog_llm_client import ToGLLMKGQAClient
 from utils.tog_search import LocalToGGraph, run_tog_search

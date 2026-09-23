@@ -65,7 +65,7 @@ class RemoteTestClient:
         unload_model(base_url=self.base_url, headers=self.headers, model=model)
 
 if __name__ == "__main__":
-    CONFIG_PATH = Path(__file__).with_name("openwebui_config.json").parent / "configs" / "openwebui_config.json"
+    CONFIG_PATH = Path(ROOT_DIR) / "configs" / "openwebui_config.json"
 
     client = RemoteTestClient(CONFIG_PATH)
 

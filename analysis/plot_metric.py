@@ -4,6 +4,11 @@ import os
 
 from collections import defaultdict
 
+import sys
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT_DIR)
+
 from model.constants import valid_models
 
 import matplotlib.pyplot as plt

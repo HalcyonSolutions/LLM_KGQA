@@ -4,6 +4,11 @@ from collections import Counter
 import json
 from pathlib import Path
 
+import sys
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT_DIR))
+
 from kgqa_tog import answer_text_correct
 from utils.tog_parsing import PARSER_VERSION, parse_answer
 

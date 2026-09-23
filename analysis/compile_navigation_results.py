@@ -2,7 +2,7 @@
 Compile KGQA navigation results into a compact CSV.
 
 Example:
-    python compile_navigation_results.py --dataset kinship
+    python analysis/compile_navigation_results.py --dataset kinship
 
 Output:
     results/navigation/compiled/kinship.csv
