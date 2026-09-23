@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 
-MODEL_PROFILE_SCHEMA_VERSION = 1
+MODEL_PROFILE_SCHEMA_VERSION = 2
 
 
 class ModelProfileError(ValueError):
@@ -18,21 +18,30 @@ class ModelProfileError(ValueError):
 
 @dataclass(frozen=True)
 class ModelProfile:
-    """Validated model metadata independent from a particular API server."""
+    """Validated model and artifact metadata independent from a server alias."""
 
     path: Path
     schema_version: int
     name: str
     model_id: str
     family: str
+    parameter_size: str | None
     source: Dict[str, Any]
-    instruction_tuned: bool
+    runtime_provider: str | None
+    connection_type: str | None
+    artifact_format: str | None
+    artifact_digest: str | None
+    artifact_size_bytes: int | None
+    instruction_tuned: bool | None
     quantized: bool
     quantization_bits: int | None
     quantization_format: str | None
     context_window: int
-    supports_thinking: bool
-    supports_structured_output: bool
+    embedding_length: int | None
+    supports_completion: bool | None
+    supports_tools: bool | None
+    supports_thinking: bool | None
+    supports_structured_output: bool | None
 
     @property
     def result_name(self) -> str:
@@ -48,8 +57,18 @@ class ModelProfile:
             "model": {
                 "id": self.model_id,
                 "family": self.family,
+                "parameter_size": self.parameter_size,
             },
             "source": dict(self.source),
+            "runtime": {
+                "provider": self.runtime_provider,
+                "connection_type": self.connection_type,
+            },
+            "artifact": {
+                "format": self.artifact_format,
+                "digest": self.artifact_digest,
+                "size_bytes": self.artifact_size_bytes,
+            },
             "variant": {
                 "instruction_tuned": self.instruction_tuned,
                 "quantization": {
@@ -60,6 +79,9 @@ class ModelProfile:
             },
             "capabilities": {
                 "context_window": self.context_window,
+                "embedding_length": self.embedding_length,
+                "completion": self.supports_completion,
+                "tools": self.supports_tools,
                 "thinking": self.supports_thinking,
                 "structured_output": self.supports_structured_output,
             },
@@ -78,16 +100,34 @@ def _require_nonempty_string(value: Any, field: str) -> str:
     return value.strip()
 
 
+def _optional_string(value: Any, field: str) -> str | None:
+    if value is None:
+        return None
+    return _require_nonempty_string(value, field)
+
+
 def _require_bool(value: Any, field: str) -> bool:
     if not isinstance(value, bool):
         raise ModelProfileError(f"'{field}' must be true or false.")
     return value
 
 
+def _optional_bool(value: Any, field: str) -> bool | None:
+    if value is None:
+        return None
+    return _require_bool(value, field)
+
+
 def _require_positive_int(value: Any, field: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
         raise ModelProfileError(f"'{field}' must be a positive integer.")
     return value
+
+
+def _optional_positive_int(value: Any, field: str) -> int | None:
+    if value is None:
+        return None
+    return _require_positive_int(value, field)
 
 
 def load_model_profile(path: str | Path) -> ModelProfile:
@@ -105,7 +145,6 @@ def load_model_profile(path: str | Path) -> ModelProfile:
         ) from exc
 
     root = _require_mapping(raw, "profile")
-
     schema_version = root.get("schema_version")
     if schema_version != MODEL_PROFILE_SCHEMA_VERSION:
         raise ModelProfileError(
@@ -117,19 +156,36 @@ def load_model_profile(path: str | Path) -> ModelProfile:
 
     model = _require_mapping(root.get("model"), "model")
     model_id = _require_nonempty_string(model.get("id"), "model.id")
-    family_raw = model.get("family", name)
-    family = _require_nonempty_string(family_raw, "model.family")
+    family = _require_nonempty_string(model.get("family", name), "model.family")
+    parameter_size = _optional_string(
+        model.get("parameter_size"),
+        "model.parameter_size",
+    )
 
-    source_raw = root.get("source", {})
-    source = _require_mapping(source_raw, "source")
+    source = _require_mapping(root.get("source", {}), "source")
     for key, value in source.items():
         if value is not None and not isinstance(value, (str, int, float, bool)):
             raise ModelProfileError(
                 f"'source.{key}' must be a scalar JSON value or null."
             )
 
+    runtime = _require_mapping(root.get("runtime", {}), "runtime")
+    runtime_provider = _optional_string(runtime.get("provider"), "runtime.provider")
+    connection_type = _optional_string(
+        runtime.get("connection_type"),
+        "runtime.connection_type",
+    )
+
+    artifact = _require_mapping(root.get("artifact", {}), "artifact")
+    artifact_format = _optional_string(artifact.get("format"), "artifact.format")
+    artifact_digest = _optional_string(artifact.get("digest"), "artifact.digest")
+    artifact_size_bytes = _optional_positive_int(
+        artifact.get("size_bytes"),
+        "artifact.size_bytes",
+    )
+
     variant = _require_mapping(root.get("variant"), "variant")
-    instruction_tuned = _require_bool(
+    instruction_tuned = _optional_bool(
         variant.get("instruction_tuned"),
         "variant.instruction_tuned",
     )
@@ -142,16 +198,14 @@ def load_model_profile(path: str | Path) -> ModelProfile:
         quantization.get("enabled"),
         "variant.quantization.enabled",
     )
-
     bits = quantization.get("bits")
     quantization_format = quantization.get("format")
     if quantized:
         bits = _require_positive_int(bits, "variant.quantization.bits")
-        if quantization_format is not None:
-            quantization_format = _require_nonempty_string(
-                quantization_format,
-                "variant.quantization.format",
-            )
+        quantization_format = _require_nonempty_string(
+            quantization_format,
+            "variant.quantization.format",
+        )
     else:
         if bits is not None:
             raise ModelProfileError(
@@ -167,11 +221,23 @@ def load_model_profile(path: str | Path) -> ModelProfile:
         capabilities.get("context_window"),
         "capabilities.context_window",
     )
-    supports_thinking = _require_bool(
+    embedding_length = _optional_positive_int(
+        capabilities.get("embedding_length"),
+        "capabilities.embedding_length",
+    )
+    supports_completion = _optional_bool(
+        capabilities.get("completion"),
+        "capabilities.completion",
+    )
+    supports_tools = _optional_bool(
+        capabilities.get("tools"),
+        "capabilities.tools",
+    )
+    supports_thinking = _optional_bool(
         capabilities.get("thinking"),
         "capabilities.thinking",
     )
-    supports_structured_output = _require_bool(
+    supports_structured_output = _optional_bool(
         capabilities.get("structured_output"),
         "capabilities.structured_output",
     )
@@ -182,12 +248,21 @@ def load_model_profile(path: str | Path) -> ModelProfile:
         name=name,
         model_id=model_id,
         family=family,
+        parameter_size=parameter_size,
         source=source,
+        runtime_provider=runtime_provider,
+        connection_type=connection_type,
+        artifact_format=artifact_format,
+        artifact_digest=artifact_digest,
+        artifact_size_bytes=artifact_size_bytes,
         instruction_tuned=instruction_tuned,
         quantized=quantized,
         quantization_bits=bits,
         quantization_format=quantization_format,
         context_window=context_window,
+        embedding_length=embedding_length,
+        supports_completion=supports_completion,
+        supports_tools=supports_tools,
         supports_thinking=supports_thinking,
         supports_structured_output=supports_structured_output,
     )
@@ -218,14 +293,20 @@ def validate_runtime_settings(
             f"'{profile.name}' ({profile.context_window})."
         )
 
-    if use_think and not profile.supports_thinking:
+    if use_think and profile.supports_thinking is not True:
+        state = "unknown" if profile.supports_thinking is None else "unsupported"
         raise ModelProfileError(
-            f"Model profile '{profile.name}' does not declare thinking support."
+            f"Thinking is {state} for model profile '{profile.name}'."
         )
 
-    if structured_output and not profile.supports_structured_output:
+    if structured_output and profile.supports_structured_output is not True:
+        state = (
+            "unknown"
+            if profile.supports_structured_output is None
+            else "unsupported"
+        )
         raise ModelProfileError(
-            f"Model profile '{profile.name}' does not declare structured-output support."
+            f"Structured output is {state} for model profile '{profile.name}'."
         )
 
 
