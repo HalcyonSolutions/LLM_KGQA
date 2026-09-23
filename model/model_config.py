@@ -33,14 +33,16 @@ class ModelProfile:
     artifact_digest: str | None
     artifact_size_bytes: int | None
     instruction_tuned: bool | None
-    quantized: bool
+    quantized: bool | None
     quantization_bits: int | None
     quantization_format: str | None
-    context_window: int
+    context_window: int | None
     embedding_length: int | None
+    native_capabilities: tuple[str, ...] | None
     supports_completion: bool | None
     supports_tools: bool | None
     supports_thinking: bool | None
+    supports_vision: bool | None
     supports_structured_output: bool | None
 
     @property
@@ -80,9 +82,15 @@ class ModelProfile:
             "capabilities": {
                 "context_window": self.context_window,
                 "embedding_length": self.embedding_length,
+                "native": (
+                    list(self.native_capabilities)
+                    if self.native_capabilities is not None
+                    else None
+                ),
                 "completion": self.supports_completion,
                 "tools": self.supports_tools,
                 "thinking": self.supports_thinking,
+                "vision": self.supports_vision,
                 "structured_output": self.supports_structured_output,
             },
         }
@@ -128,6 +136,20 @@ def _optional_positive_int(value: Any, field: str) -> int | None:
     if value is None:
         return None
     return _require_positive_int(value, field)
+
+
+def _optional_string_list(value: Any, field: str) -> tuple[str, ...] | None:
+    if value is None:
+        return None
+    if not isinstance(value, list):
+        raise ModelProfileError(f"'{field}' must be a JSON list or null.")
+
+    normalized = []
+    for index, item in enumerate(value):
+        normalized.append(
+            _require_nonempty_string(item, f"{field}[{index}]")
+        )
+    return tuple(normalized)
 
 
 def load_model_profile(path: str | Path) -> ModelProfile:
@@ -194,36 +216,35 @@ def load_model_profile(path: str | Path) -> ModelProfile:
         variant.get("quantization"),
         "variant.quantization",
     )
-    quantized = _require_bool(
+    quantized = _optional_bool(
         quantization.get("enabled"),
         "variant.quantization.enabled",
     )
-    bits = quantization.get("bits")
-    quantization_format = quantization.get("format")
-    if quantized:
-        bits = _require_positive_int(bits, "variant.quantization.bits")
-        quantization_format = _require_nonempty_string(
-            quantization_format,
-            "variant.quantization.format",
+    bits = _optional_positive_int(
+        quantization.get("bits"),
+        "variant.quantization.bits",
+    )
+    quantization_format = _optional_string(
+        quantization.get("format"),
+        "variant.quantization.format",
+    )
+    if quantized is False and (bits is not None or quantization_format is not None):
+        raise ModelProfileError(
+            "Quantization bits/format must be null when quantization is disabled."
         )
-    else:
-        if bits is not None:
-            raise ModelProfileError(
-                "'variant.quantization.bits' must be null when quantization is disabled."
-            )
-        if quantization_format is not None:
-            raise ModelProfileError(
-                "'variant.quantization.format' must be null when quantization is disabled."
-            )
 
     capabilities = _require_mapping(root.get("capabilities"), "capabilities")
-    context_window = _require_positive_int(
+    context_window = _optional_positive_int(
         capabilities.get("context_window"),
         "capabilities.context_window",
     )
     embedding_length = _optional_positive_int(
         capabilities.get("embedding_length"),
         "capabilities.embedding_length",
+    )
+    native_capabilities = _optional_string_list(
+        capabilities.get("native"),
+        "capabilities.native",
     )
     supports_completion = _optional_bool(
         capabilities.get("completion"),
@@ -236,6 +257,10 @@ def load_model_profile(path: str | Path) -> ModelProfile:
     supports_thinking = _optional_bool(
         capabilities.get("thinking"),
         "capabilities.thinking",
+    )
+    supports_vision = _optional_bool(
+        capabilities.get("vision"),
+        "capabilities.vision",
     )
     supports_structured_output = _optional_bool(
         capabilities.get("structured_output"),
@@ -261,9 +286,11 @@ def load_model_profile(path: str | Path) -> ModelProfile:
         quantization_format=quantization_format,
         context_window=context_window,
         embedding_length=embedding_length,
+        native_capabilities=native_capabilities,
         supports_completion=supports_completion,
         supports_tools=supports_tools,
         supports_thinking=supports_thinking,
+        supports_vision=supports_vision,
         supports_structured_output=supports_structured_output,
     )
 
@@ -287,7 +314,10 @@ def validate_runtime_settings(
 ) -> None:
     """Validate experiment-time settings against declared model capabilities."""
     requested_context = _require_positive_int(context_window, "context_window")
-    if requested_context > profile.context_window:
+    if (
+        profile.context_window is not None
+        and requested_context > profile.context_window
+    ):
         raise ModelProfileError(
             f"Context window {requested_context} exceeds the declared limit for "
             f"'{profile.name}' ({profile.context_window})."
@@ -317,7 +347,8 @@ def model_result_config(
 ) -> Dict[str, Any]:
     """Return portable model metadata for inclusion in result configuration."""
     return {
-        "model": profile.family,
+        "model": profile.name,
+        "model_family": profile.family,
         "model_profile_name": profile.name,
         "model_config": str(profile.path),
         "backend_model_id": backend_model_id,

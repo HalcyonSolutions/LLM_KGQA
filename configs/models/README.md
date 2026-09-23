@@ -7,57 +7,57 @@ Model profiles describe the exact model artifact used by an experiment without r
 Export the model metadata from OpenWebUI, then convert the exported JSON:
 
 ```bash
-python tools/build_model_profile.py /path/to/qwen3-8b-q4_k_m.json
+python tools/build_model_profile.py /path/to/qwen3.json
 ```
 
 By convention:
 
 - the **input filename stem becomes the profile `name`**;
-- the exported `id` (falling back to `ollama.model`) becomes `model.id`, the actual server model identifier;
-- Ollama artifact metadata such as family, parameter size, GGUF format, digest, size, quantization level, context length, embedding length, and native capabilities are copied when present;
+- the exported top-level `id` becomes `model.id`, the actual server model identifier, with `ollama.model` and `ollama.name` used only as fallbacks;
+- available Ollama artifact/runtime metadata is copied into the profile;
+- missing export fields remain `null` instead of being guessed;
 - OpenWebUI user/access/UI metadata is intentionally ignored.
 
-For example, if the input file is named:
+This matters because OpenWebUI/Ollama exports are not uniform. Some models include `context_length` and `embedding_length`, while others omit them. Native capabilities also differ across models.
 
-```text
-qwen3-8b-q4_k_m.json
-```
+## Export-Derived Fields
 
-the generated profile contains:
+When present, the importer records:
 
-```json
-"name": "qwen3-8b-q4_k_m"
-```
+- architecture family and parameter size;
+- runtime provider and connection type;
+- artifact format, digest, and byte size;
+- quantization status, bit width when recognizable, and exact quantization label;
+- context-window and embedding lengths;
+- the complete native Ollama capability list;
+- normalized `completion`, `tools`, `thinking`, and `vision` capability flags.
 
-Rename the export file before conversion if you want a different stable profile name.
+The complete native capability list is retained so newly introduced Ollama capabilities are not lost simply because the repository does not yet have a dedicated normalized field for them.
 
-The generated file is written to `configs/models/<input-stem>.json` by default.
+## Unknown and Manual Fields
 
-## Manual Fields
+Missing export metadata is represented as `null`. In particular, a missing context length does **not** make a profile invalid; it only means the runner cannot verify that the requested `--context-window` is below the model maximum.
 
-Some properties should not be guessed from the OpenWebUI export. Review and fill these after generation:
+Some properties should not be inferred from OpenWebUI environment metadata and remain manual:
 
 - `variant.instruction_tuned`;
 - `capabilities.structured_output`;
 - `source`, if upstream provenance such as a Hugging Face repository is known.
 
-An unknown manual field is stored as `null`. Runs that explicitly require an unknown capability, such as `--structured-output`, are rejected until the profile declares support.
+Runs that explicitly require an unknown capability, such as `--structured-output`, are rejected until that capability is declared.
 
 ## Schema
 
 ```json
 {
   "schema_version": 2,
-  "name": "qwen3-8b-q4_k_m",
+  "name": "qwen3",
   "model": {
     "id": "qwen3:8b",
     "family": "qwen3",
     "parameter_size": "8.2B"
   },
-  "source": {
-    "provider": "huggingface",
-    "repo_id": "..."
-  },
+  "source": {},
   "runtime": {
     "provider": "ollama",
     "connection_type": "local"
@@ -78,21 +78,40 @@ An unknown manual field is stored as `null`. Runs that explicitly require an unk
   "capabilities": {
     "context_window": 40960,
     "embedding_length": 4096,
+    "native": [
+      "completion",
+      "tools",
+      "thinking"
+    ],
     "completion": true,
     "tools": true,
     "thinking": true,
+    "vision": false,
     "structured_output": null
   }
 }
 ```
 
+For an export that omits context information, the corresponding fields are simply:
+
+```json
+"context_window": null,
+"embedding_length": null
+```
+
+## Naming Semantics
+
+The profile `name` is the experiment-facing model name and comes only from the export filename. The `model.id` field is the actual backend/server identifier.
+
+`model.family` is architecture metadata reported by Ollama and must not be treated as the experiment-facing name. For example, a derived model may report a Qwen architecture family while retaining a different profile name.
+
 ## Server-Specific ID Overrides
 
-The generated `model.id` is the ID from the server export. If the same artifact is exposed under a different alias on another server, keep the profile and override only the API-facing identifier:
+If the same artifact is exposed under a different alias on another server, keep the profile and override only the API-facing identifier:
 
 ```bash
---model-config configs/models/qwen3-8b-q4_k_m.json \
+--model-config configs/models/qwen3.json \
 --model-id another-server-alias
 ```
 
-Result files record both the profile metadata and the resolved backend model ID.
+Result files record the profile name, architecture family, complete profile metadata, and resolved backend model ID.
