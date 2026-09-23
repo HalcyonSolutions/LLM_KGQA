@@ -51,7 +51,7 @@ Encoded datasets such as MQuAKE may also include:
 - `node_data.csv`
 - `relation_data.csv`
 
-These mapping files are optional. If they are missing, as in unencoded datasets such as `kinship_v2`, the runners assume entity and relation strings are already readable and omit title mappings from prompts.
+These mapping files are optional. If they are missing, as in unencoded datasets such as `kinship`, the runners assume entity and relation strings are already readable and omit title mappings from prompts.
 
 ## Usage
 

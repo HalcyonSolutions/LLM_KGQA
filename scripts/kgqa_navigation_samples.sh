@@ -47,7 +47,7 @@ python ./kgqa_navigation.py \
 
 # Evaluation on Kinship (zero-shot, original navigation)
 python ./kgqa_navigation.py \
-    --dataset kinship_v2 \
+    --dataset kinship \
     --hops n \
     --max-navigation-steps 3 \
     --llm-model qwen2.5 \

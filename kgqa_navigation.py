@@ -224,7 +224,7 @@ if __name__ == '__main__':
 
     all_triplets_df = load_triplets(triplet_file)
     all_triplets = set(tuple(triplet) for triplet in all_triplets_df.values)
-    outgoing_index = build_outgoing_index(all_triplets) # TODO: Add an option to build bidirectional index for other datasets. For now, only outgoing edges are used for MQuAKE and kinship_v2.
+    outgoing_index = build_outgoing_index(all_triplets) # TODO: Add an option to build bidirectional index for other datasets. For now, only outgoing edges are used for MQuAKE and kinship.
     grapher = Grapher(all_triplets)
     relation_index = grapher.get_relation_index() if args.n_shots > 0 else {}
 

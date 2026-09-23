@@ -44,7 +44,7 @@ def load_title_maps(
     """Load optional entity/relation label maps, falling back to identity labels.
 
     Encoded datasets such as MQuAKE provide ``node_data.csv`` and
-    ``relation_data.csv``. Unencoded datasets such as kinship_v2 omit those
+    ``relation_data.csv``. Unencoded datasets such as kinship omit those
     files; in that case raw node and relation strings are already readable,
     so empty maps intentionally trigger identity formatting.
 
