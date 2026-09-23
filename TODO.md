@@ -5,7 +5,7 @@
 - [ ] Implement `--prompting-approach io` and keep the prompt-template interface extensible for future prompt families.
 - [ ] Add graph directionality options (`outgoing`, `incoming`, `bidirectional`) and propagate the setting through action indexing, path validation, metrics, and result config.
 - [x] Add configurable `--max-actions` selection policies, such as `first`, seeded random sampling, and question-aware ranking.
-- [ ] Record both prompt-local option IDs and original sorted graph-action IDs in episode records, especially for truncated tuple prompts and factorized relation-action prompts.
+- [x] Record both prompt-local option IDs and original sorted graph-action IDs in episode records, especially for truncated tuple prompts and factorized relation-action prompts.
 - [ ] Reverify n-shot demonstrations for factorized and hybrid navigation flows.
 - [ ] Add support for `--memory-approach none` in n-shot demonstration prompts.
 - [ ] Add adaptive context-window handling before termination, such as reducing shown actions or switching from tuple to factorized prompts when possible.
@@ -25,7 +25,7 @@
 - [x] Add timeout and retry handling for long LLM calls.
 - [x] Add prompt token estimation and context-window configuration.
 - [x] Add support for multiple LLM backends, including OpenWebUI and Ollama.
-- [ ] Add an option to select thinking mode for LLM calls, which may improve response quality at the cost of more tokens and slower responses. Currently hardcoded into api.
+- [x] Add an option to select thinking mode for LLM calls, which may improve response quality at the cost of more tokens and slower responses. Currently hardcoded into api.
 
 ### Metrics And Evaluation
 
