@@ -27,7 +27,7 @@ Dataset-specific limits encoded by the script are:
 | MQuAKE-ST Single | 4 | 200 | 32K |
 | MQuAKE-ST Multi | 4 | 200 | 32K |
 
-The script also records model-specific instruct and quantized variants used in the experiments.
+The script selects explicit model profiles under `configs/models/`; each profile records the model variant and capability metadata used in the experiment.
 
 ## Table 4: Think-on-Graph
 
@@ -72,5 +72,7 @@ cp configs/openwebui_template.json configs/openwebui_config.json
 ```
 
 Then fill in the connection information for Ollama or Open WebUI.
+
+Model variants are selected independently through `--model-config`. The committed paper scripts reference profiles under `configs/models/`. If a local server uses different model IDs, use the runner's `--model-id` override without changing the rest of the experiment configuration.
 
 For workflow-specific options, see [Navigation](navigation.md), [Think-on-Graph](tog.md), and [Subgraph QA](subgraph.md).
