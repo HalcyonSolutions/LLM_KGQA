@@ -189,12 +189,6 @@ def main():
             context_window=args.context_window,
             structured_output=args.structured_output,
         )
-        config.update(
-            model_result_config(
-                model_profile,
-                backend_model_id=client.model_choice,
-            )
-        )
         model_name = model_profile.result_name
     structured = "structured" if args.structured_output else "unstructured"
     direction = "bidirectional" if args.bidirectional else "outgoing"
@@ -249,6 +243,12 @@ def main():
             relation_title=relation_title,
             max_parse_retries=args.max_parse_retries,
             structured_output=args.structured_output,
+        )
+        config.update(
+            model_result_config(
+                model_profile,
+                backend_model_id=client.model_choice,
+            )
         )
 
     episodes = []

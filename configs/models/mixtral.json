@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "mixtral",
+  "model": {
+    "id": "mixtral",
+    "family": "mixtral"
+  },
+  "source": {},
+  "variant": {
+    "instruction_tuned": false,
+    "quantization": {
+      "enabled": false,
+      "bits": null,
+      "format": null
+    }
+  },
+  "capabilities": {
+    "context_window": 32768,
+    "thinking": false,
+    "structured_output": true
+  }
+}

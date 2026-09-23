@@ -1,17 +1,14 @@
 # Evaluation on Kinship with evidence paths only
-# python ./kgqa_subgraph.py --dataset kinship --hops n --llm-model gemma3 -e
-python ./kgqa_subgraph.py --dataset kinship --hops n --llm-model llama3 -e
-python ./kgqa_subgraph.py --dataset kinship --hops n --llm-model llama3.1 -e
-python ./kgqa_subgraph.py --dataset kinship --hops n --llm-model deepseek-coder -e
-# python ./kgqa_subgraph.py --dataset kinship --hops n --llm-model qwen2.5 -e
-python ./kgqa_subgraph.py --dataset kinship --hops n --llm-model gpt-oss -e
-python ./kgqa_subgraph.py --dataset kinship --hops n --llm-model mixtral -e
+python ./kgqa_subgraph.py --dataset kinship --hops n --model-config configs/models/llama3.json -e
+python ./kgqa_subgraph.py --dataset kinship --hops n --model-config configs/models/llama3.1.json -e
+python ./kgqa_subgraph.py --dataset kinship --hops n --model-config configs/models/deepseek-coder.json -e
+python ./kgqa_subgraph.py --dataset kinship --hops n --model-config configs/models/gpt-oss.json -e
+python ./kgqa_subgraph.py --dataset kinship --hops n --model-config configs/models/mixtral.json -e
 
 # Evaluation on MQuAKE with evidence paths only
-# python ./kgqa_subgraph.py --dataset mquake --hops n --llm-model gemma3 -e
-python ./kgqa_subgraph.py --dataset mquake --hops n --llm-model llama3 -e
-python ./kgqa_subgraph.py --dataset mquake --hops n --llm-model llama3.1 -e
-python ./kgqa_subgraph.py --dataset mquake --hops n --llm-model deepseek-coder -e
-python ./kgqa_subgraph.py --dataset mquake --hops n --llm-model qwen2.5 -e
-python ./kgqa_subgraph.py --dataset mquake --hops n --llm-model gpt-oss -e
-python ./kgqa_subgraph.py --dataset mquake --hops n --llm-model mixtral -e
+python ./kgqa_subgraph.py --dataset mquake --hops n --model-config configs/models/llama3.json -e
+python ./kgqa_subgraph.py --dataset mquake --hops n --model-config configs/models/llama3.1.json -e
+python ./kgqa_subgraph.py --dataset mquake --hops n --model-config configs/models/deepseek-coder.json -e
+python ./kgqa_subgraph.py --dataset mquake --hops n --model-config configs/models/qwen2.5.json -e
+python ./kgqa_subgraph.py --dataset mquake --hops n --model-config configs/models/gpt-oss.json -e
+python ./kgqa_subgraph.py --dataset mquake --hops n --model-config configs/models/mixtral.json -e

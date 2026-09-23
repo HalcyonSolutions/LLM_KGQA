@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "deepseek-coder",
+  "model": {
+    "id": "deepseek-coder",
+    "family": "deepseek-coder"
+  },
+  "source": {},
+  "variant": {
+    "instruction_tuned": false,
+    "quantization": {
+      "enabled": false,
+      "bits": null,
+      "format": null
+    }
+  },
+  "capabilities": {
+    "context_window": 32768,
+    "thinking": false,
+    "structured_output": true
+  }
+}

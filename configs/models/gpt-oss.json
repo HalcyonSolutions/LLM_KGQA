@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "gpt-oss",
+  "model": {
+    "id": "gpt-oss",
+    "family": "gpt-oss"
+  },
+  "source": {},
+  "variant": {
+    "instruction_tuned": false,
+    "quantization": {
+      "enabled": false,
+      "bits": null,
+      "format": null
+    }
+  },
+  "capabilities": {
+    "context_window": 131072,
+    "thinking": true,
+    "structured_output": true
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "deepseek-r1",
+  "model": {
+    "id": "deepseek-r1",
+    "family": "deepseek-r1"
+  },
+  "source": {},
+  "variant": {
+    "instruction_tuned": false,
+    "quantization": {
+      "enabled": false,
+      "bits": null,
+      "format": null
+    }
+  },
+  "capabilities": {
+    "context_window": 131072,
+    "thinking": true,
+    "structured_output": true
+  }
+}

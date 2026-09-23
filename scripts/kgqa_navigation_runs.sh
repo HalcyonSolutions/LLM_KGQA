@@ -3,33 +3,18 @@
 set -euo pipefail
 
 # ============================================================
-# Models
+# Model profiles
 # ============================================================
 
-models=(
-    "qwen3"
-    "gemma4"
-    "qwen2.5"
-    "llama3.1"
-    "granite3.3"
-    "ministral-3"
-    "olmo-3"
-    "phi4-mini"
-)
-
-# These models should use their explicit instruct variants.
-requires_instruct=(
-    "qwen2.5"
-    "llama3.1"
-    "ministral-3"
-    "olmo-3"
-)
-
-# These models should use the Q4 variant.
-requires_quantized=(
-    "qwen2.5"
-    "llama3.1"
-    "ministral-3"
+model_configs=(
+    "configs/models/qwen3.json"
+    "configs/models/gemma4.json"
+    "configs/models/qwen2.5-instruct-q4.json"
+    "configs/models/llama3.1-instruct-q4.json"
+    "configs/models/granite3.3.json"
+    "configs/models/ministral-3-instruct-q4.json"
+    "configs/models/olmo-3-instruct.json"
+    "configs/models/phi4-mini.json"
 )
 
 # ============================================================
@@ -79,59 +64,19 @@ timeout=15
 # decision always corresponds to one LLM generation.
 max_parse_retries=0
 
-# ============================================================
-# Helpers
-# ============================================================
-
-contains_model() {
-    local target="$1"
-    shift
-
-    local item
-    for item in "$@"; do
-        if [[ "$item" == "$target" ]]; then
-            return 0
-        fi
-    done
-
-    return 1
-}
-
-
 run_navigation() {
     local dataset="$1"
-    local model="$2"
+    local model_config="$2"
     local prompting="$3"
     local structured="$4"
 
-    local model_flags=()
     local prompt_flags=()
     local output_flags=()
 
-    # --------------------
-    # Model variant
-    # --------------------
-
-    if contains_model "$model" "${requires_instruct[@]}"; then
-        model_flags+=(--use-instruct)
-    fi
-
-    if contains_model "$model" "${requires_quantized[@]}"; then
-        model_flags+=(--use-quantized --quantization-bits 4)
-    fi
-
-    # --------------------
-    # Prompting
-    # --------------------
-
     case "$prompting" in
         zero-shot)
-            prompt_flags+=(
-                --prompting-approach zero-shot
-                --n-shots 0
-            )
+            prompt_flags+=(--prompting-approach zero-shot --n-shots 0)
             ;;
-
         one-shot)
             prompt_flags+=(
                 --prompting-approach one-shot
@@ -140,16 +85,11 @@ run_navigation() {
                 --demo-max-actions 5
             )
             ;;
-
         *)
             echo "Unknown prompting mode: $prompting"
             return 1
             ;;
     esac
-
-    # --------------------
-    # Output constraint
-    # --------------------
 
     if [[ "$structured" == "true" ]]; then
         output_flags+=(--structured-output)
@@ -158,7 +98,7 @@ run_navigation() {
     echo
     echo "============================================================"
     echo "Dataset:          $dataset"
-    echo "Model:            $model"
+    echo "Model profile:    $model_config"
     echo "Prompting:        $prompting"
     echo "Structured:       $structured"
     echo "Max steps:        ${dataset_max_steps[$dataset]}"
@@ -175,8 +115,7 @@ run_navigation() {
         --max-navigation-steps "${dataset_max_steps[$dataset]}" \
         --max-actions "${dataset_max_actions[$dataset]}" \
         --context-window "${dataset_context_window[$dataset]}" \
-        --llm-model "$model" \
-        "${model_flags[@]}" \
+        --model-config "$model_config" \
         --navigation-approach tuple \
         --memory-approach full \
         "${prompt_flags[@]}" \
@@ -188,44 +127,22 @@ run_navigation() {
         --max-parse-retries "$max_parse_retries"
 }
 
-
-# ============================================================
-# Experiments
-# ============================================================
-
 echo "Running KGQA Navigation Experiments"
-
-# ------------------------------------------------------------
-# 1. Zero-shot, original tuple navigation
-# ------------------------------------------------------------
 
 echo
 echo "### Zero-shot / Full Memory / Tuple / Structured ###"
 
 for dataset in "${datasets[@]}"; do
-    for model in "${models[@]}"; do
-        run_navigation \
-            "$dataset" \
-            "$model" \
-            "zero-shot" \
-            "true"
+    for model_config in "${model_configs[@]}"; do
+        run_navigation "$dataset" "$model_config" "zero-shot" "true"
     done
 done
-
-
-# ------------------------------------------------------------
-# 2. One-shot, full demonstration
-# ------------------------------------------------------------
 
 echo
 echo "### One-shot / Full Demo / Full Memory / Tuple / Structured ###"
 
 for dataset in "${datasets[@]}"; do
-    for model in "${models[@]}"; do
-        run_navigation \
-            "$dataset" \
-            "$model" \
-            "one-shot" \
-            "true"
+    for model_config in "${model_configs[@]}"; do
+        run_navigation "$dataset" "$model_config" "one-shot" "true"
     done
 done

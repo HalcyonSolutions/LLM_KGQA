@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "llama3",
+  "model": {
+    "id": "llama3",
+    "family": "llama3"
+  },
+  "source": {},
+  "variant": {
+    "instruction_tuned": false,
+    "quantization": {
+      "enabled": false,
+      "bits": null,
+      "format": null
+    }
+  },
+  "capabilities": {
+    "context_window": 8192,
+    "thinking": false,
+    "structured_output": true
+  }
+}

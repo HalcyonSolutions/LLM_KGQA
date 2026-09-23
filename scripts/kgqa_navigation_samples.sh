@@ -7,8 +7,7 @@ python ./kgqa_navigation.py \
     --max-navigation-steps 4 \
     --max-actions 200 \
     --context-window 32768 \
-    --llm-model qwen2.5 \
-    --use-instruct \
+    --model-config configs/models/qwen2.5-instruct-q4.json \
     --navigation-approach tuple \
     --memory-approach full \
     --prompting-approach zero-shot \
@@ -24,8 +23,7 @@ python ./kgqa_navigation.py \
     --demo-max-actions 5 \
     --max-actions 200 \
     --context-window 32768 \
-    --llm-model qwen2.5 \
-    --use-instruct \
+    --model-config configs/models/qwen2.5-instruct-q4.json \
     --navigation-approach tuple \
     --memory-approach full \
     --prompting-approach one-shot \
@@ -38,8 +36,7 @@ python ./kgqa_navigation.py \
     --max-navigation-steps 4 \
     --max-actions 200 \
     --context-window 32768 \
-    --llm-model qwen2.5 \
-    --use-instruct \
+    --model-config configs/models/qwen2.5-instruct-q4.json \
     --navigation-approach hybrid \
     --memory-approach full \
     --prompting-approach zero-shot \
@@ -50,8 +47,7 @@ python ./kgqa_navigation.py \
     --dataset kinship \
     --hops n \
     --max-navigation-steps 3 \
-    --llm-model qwen2.5 \
-    --use-instruct \
+    --model-config configs/models/qwen2.5-instruct-q4.json \
     --navigation-approach tuple \
     --memory-approach full \
     --prompting-approach zero-shot \
@@ -66,13 +62,13 @@ python ./kgqa_navigation.py \
     --demo-max-actions 5 \
     --max-actions 200 \
     --context-window 32768 \
-    --llm-model gemma4 \
+    --model-config configs/models/gemma4.json \
     --structured-output \
     --navigation-approach tuple \
     --memory-approach full \
     --prompting-approach one-shot \
     --timeout 15 \
-    --max-questions 10 
+    --max-questions 10
 
 python ./kgqa_navigation.py \
     --dataset mquake_single \
@@ -83,7 +79,7 @@ python ./kgqa_navigation.py \
     --demo-max-actions 5 \
     --max-actions 200 \
     --context-window 32768 \
-    --llm-model deepseek-r1 \
+    --model-config configs/models/deepseek-r1.json \
     --navigation-approach tuple \
     --memory-approach full \
     --prompting-approach one-shot \
@@ -93,7 +89,7 @@ python kgqa_tog.py \
     --dataset mquake_single \
     --hops n \
     --split test \
-    --llm-model ministral-3 \
+    --model-config configs/models/ministral-3-instruct-q4.json \
     --width 3 \
     --max-depth 4 \
     --bidirectional \
