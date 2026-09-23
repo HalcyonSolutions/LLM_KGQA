@@ -66,10 +66,12 @@ Search does not use answer annotations unless `--oracle-selectors` is explicitly
 
 ## Usage
 
+ToG uses the same validated model profiles as the other runners. The profile defines the intended artifact and capabilities; `--model-id` may override the backend-specific identifier without changing the rest of the profile metadata.
+
 Basic example:
 
 ```bash
-python kgqa_tog.py --dataset mquake_single --llm-model qwen3 --use-instruct
+python kgqa_tog.py --dataset mquake_single --model-config configs/models/qwen3.json
 ```
 
 Use `--max-depth 4` for four-hop experiments.
