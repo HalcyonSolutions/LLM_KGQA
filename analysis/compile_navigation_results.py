@@ -2,10 +2,10 @@
 Compile KGQA navigation results into a compact CSV.
 
 Example:
-    python compile_navigation_results.py --dataset kinship_v2
+    python compile_navigation_results.py --dataset kinship
 
 Output:
-    results/navigation/compiled/kinship_v2.csv
+    results/navigation/compiled/kinship.csv
 
 Each run contributes:
     - one Overall row
@@ -64,7 +64,7 @@ def parse_args():
     parser.add_argument(
         "--dataset",
         required=True,
-        help="Dataset name, e.g. kinship_v2 or mquake_multi.",
+        help="Dataset name, e.g. kinship or mquake_multi.",
     )
 
     parser.add_argument(
