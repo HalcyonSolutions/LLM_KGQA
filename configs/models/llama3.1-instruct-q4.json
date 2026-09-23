@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "llama3.1-instruct-q4",
+  "model": {"id": "llama3.1:instruct-q4", "family": "llama3.1"},
+  "source": {},
+  "variant": {
+    "instruction_tuned": true,
+    "quantization": {"enabled": true, "bits": 4, "format": "Q4"}
+  },
+  "capabilities": {
+    "context_window": 131072,
+    "thinking": false,
+    "structured_output": true
+  }
+}

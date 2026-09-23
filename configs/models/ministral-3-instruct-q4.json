@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "ministral-3-instruct-q4",
+  "model": {"id": "ministral-3:instruct-q4", "family": "ministral-3"},
+  "source": {},
+  "variant": {
+    "instruction_tuned": true,
+    "quantization": {"enabled": true, "bits": 4, "format": "Q4"}
+  },
+  "capabilities": {
+    "context_window": 262144,
+    "thinking": false,
+    "structured_output": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "gemma4",
+  "model": {"id": "gemma4", "family": "gemma4"},
+  "source": {},
+  "variant": {
+    "instruction_tuned": false,
+    "quantization": {"enabled": false, "bits": null, "format": null}
+  },
+  "capabilities": {
+    "context_window": 131072,
+    "thinking": true,
+    "structured_output": true
+  }
+}

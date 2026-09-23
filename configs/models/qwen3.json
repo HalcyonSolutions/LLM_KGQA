@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "qwen3",
+  "model": {"id": "qwen3", "family": "qwen3"},
+  "source": {},
+  "variant": {
+    "instruction_tuned": false,
+    "quantization": {"enabled": false, "bits": null, "format": null}
+  },
+  "capabilities": {
+    "context_window": 40960,
+    "thinking": true,
+    "structured_output": true
+  }
+}

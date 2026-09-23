@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "granite3.3",
+  "model": {"id": "granite3.3", "family": "granite3.3"},
+  "source": {},
+  "variant": {
+    "instruction_tuned": false,
+    "quantization": {"enabled": false, "bits": null, "format": null}
+  },
+  "capabilities": {
+    "context_window": 131072,
+    "thinking": false,
+    "structured_output": true
+  }
+}

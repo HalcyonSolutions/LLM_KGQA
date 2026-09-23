@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "olmo-3-instruct",
+  "model": {"id": "olmo-3:instruct", "family": "olmo-3"},
+  "source": {},
+  "variant": {
+    "instruction_tuned": true,
+    "quantization": {"enabled": false, "bits": null, "format": null}
+  },
+  "capabilities": {
+    "context_window": 65536,
+    "thinking": false,
+    "structured_output": true
+  }
+}
