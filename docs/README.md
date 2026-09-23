@@ -4,6 +4,8 @@ This directory contains the detailed documentation for the KGQA workflows implem
 
 ## Guides
 
+- [Model Profiles](../configs/models/README.md): portable model IDs, variant metadata, capabilities, validation, and server-specific overrides.
+
 - [Navigation](navigation.md): iterative graph navigation, prompting, memory, action selection, and context handling.
 - [Think-on-Graph](tog.md): local ToG adaptation, upstream compatibility, search behavior, parsing, evaluation, and versioning.
 - [Subgraph QA](subgraph.md): subgraph-at-once QA, sampling strategies, and retrieval mode.
