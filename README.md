@@ -44,6 +44,25 @@ cp configs/openwebui_template.json configs/openwebui_config.json
 
 Then fill in the connection information for the selected backend. The configuration supports direct Ollama access or Open WebUI.
 
+### Model Profiles
+
+Models are configured through validated JSON profiles under `configs/models/` rather than repository-specific model-name conventions.
+
+A profile records the backend model ID, model family, instruct/quantization metadata, context-window limit, and declared capabilities. Select one with:
+
+```bash
+--model-config configs/models/qwen2.5-instruct-q4.json
+```
+
+If another server exposes the same deployed model under a different ID, override only the API-facing identifier:
+
+```bash
+--model-config configs/models/qwen2.5-instruct-q4.json \
+--model-id my-server-model-alias
+```
+
+See [configs/models/README.md](configs/models/README.md) for the profile schema and validation rules.
+
 ## Datasets
 
 The paper evaluates the navigation-ready **KINSHIP** and **MQuAKE-ST** resources, including the Single Answer and Multi Answer MQuAKE-ST settings.
@@ -86,8 +105,7 @@ See [docs/reproducibility.md](docs/reproducibility.md) for the exact configurati
 python ./kgqa_navigation.py \
   --dataset mquake_single \
   --hops n \
-  --llm-model qwen2.5 \
-  --use-instruct \
+  --model-config configs/models/qwen2.5-instruct-q4.json \
   --navigation-approach tuple \
   --memory-approach full \
   --prompting-approach zero-shot \
@@ -120,8 +138,7 @@ See [docs/tog.md](docs/tog.md) for the upstream revision, search procedure, fall
 python ./kgqa_subgraph.py \
   --dataset mquake_single \
   --hops n \
-  --llm-model qwen2.5 \
-  --use-instruct \
+  --model-config configs/models/qwen2.5-instruct-q4.json \
   --sampling-method neighborhood \
   --subgraph-size 50 \
   --max-depth 3 \
