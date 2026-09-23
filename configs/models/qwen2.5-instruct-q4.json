@@ -2,34 +2,43 @@
   "schema_version": 2,
   "name": "qwen2.5-instruct-q4",
   "model": {
-    "id": "qwen2.5:instruct-q4",
-    "family": "qwen2.5",
-    "parameter_size": null
+    "id": "qwen2.5:7b-instruct-q4_K_M",
+    "family": "qwen2",
+    "parameter_size": "7.6B"
   },
-  "source": {},
+  "source": {
+    "provider": "ollama",
+    "repository": "qwen2.5",
+    "url": "https://ollama.com/library/qwen2.5"
+  },
   "runtime": {
-    "provider": null,
-    "connection_type": null
+    "provider": "ollama",
+    "connection_type": "local"
   },
   "artifact": {
-    "format": null,
-    "digest": null,
-    "size_bytes": null
+    "format": "gguf",
+    "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+    "size_bytes": 4683087332
   },
   "variant": {
     "instruction_tuned": true,
     "quantization": {
       "enabled": true,
       "bits": 4,
-      "format": "Q4"
+      "format": "Q4_K_M"
     }
   },
   "capabilities": {
     "context_window": 32768,
-    "embedding_length": null,
-    "completion": null,
-    "tools": null,
+    "embedding_length": 3584,
+    "native": [
+      "completion",
+      "tools"
+    ],
+    "completion": true,
+    "tools": true,
     "thinking": false,
+    "vision": false,
     "structured_output": true
   }
 }

@@ -2,34 +2,44 @@
   "schema_version": 2,
   "name": "granite3.3",
   "model": {
-    "id": "granite3.3",
-    "family": "granite3.3",
-    "parameter_size": null
+    "id": "granite3.3:8b",
+    "family": "granite",
+    "parameter_size": "8.2B"
   },
-  "source": {},
+  "source": {
+    "provider": "ollama",
+    "repository": "granite3.3",
+    "tag": "latest",
+    "url": "https://ollama.com/library/granite3.3"
+  },
   "runtime": {
-    "provider": null,
-    "connection_type": null
+    "provider": "ollama",
+    "connection_type": "local"
   },
   "artifact": {
-    "format": null,
-    "digest": null,
-    "size_bytes": null
+    "format": "gguf",
+    "digest": "fd429f23b90980ed1bef53b990894e7b0199331f6ae90c5650240a7d5b70f1f7",
+    "size_bytes": 4942891653
   },
   "variant": {
     "instruction_tuned": false,
     "quantization": {
-      "enabled": false,
-      "bits": null,
-      "format": null
+      "enabled": true,
+      "bits": 4,
+      "format": "Q4_K_M"
     }
   },
   "capabilities": {
     "context_window": 131072,
-    "embedding_length": null,
-    "completion": null,
-    "tools": null,
+    "embedding_length": 4096,
+    "native": [
+      "completion",
+      "tools"
+    ],
+    "completion": true,
+    "tools": true,
     "thinking": false,
+    "vision": false,
     "structured_output": true
   }
 }

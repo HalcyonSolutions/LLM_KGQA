@@ -2,34 +2,45 @@
   "schema_version": 2,
   "name": "gemma4",
   "model": {
-    "id": "gemma4",
+    "id": "gemma4:latest",
     "family": "gemma4",
-    "parameter_size": null
+    "parameter_size": "8.0B"
   },
-  "source": {},
+  "source": {
+    "provider": "ollama",
+    "repository": "gemma4",
+    "tag": "latest",
+    "url": "https://ollama.com/library/gemma4"
+  },
   "runtime": {
-    "provider": null,
-    "connection_type": null
+    "provider": "ollama",
+    "connection_type": "local"
   },
   "artifact": {
-    "format": null,
-    "digest": null,
-    "size_bytes": null
+    "format": "gguf",
+    "digest": "c6eb396dbd5992bbe3f5cdb947e8bbc0ee413d7c17e2beaae69f5d569cf982eb",
+    "size_bytes": 9608350718
   },
   "variant": {
     "instruction_tuned": false,
     "quantization": {
-      "enabled": false,
-      "bits": null,
-      "format": null
+      "enabled": true,
+      "bits": 4,
+      "format": "Q4_K_M"
     }
   },
   "capabilities": {
     "context_window": 131072,
     "embedding_length": null,
-    "completion": null,
-    "tools": null,
+    "native": [
+      "completion",
+      "tools",
+      "thinking"
+    ],
+    "completion": true,
+    "tools": true,
     "thinking": true,
+    "vision": false,
     "structured_output": true
   }
 }

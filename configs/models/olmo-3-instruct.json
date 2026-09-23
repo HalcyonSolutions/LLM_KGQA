@@ -2,34 +2,43 @@
   "schema_version": 2,
   "name": "olmo-3-instruct",
   "model": {
-    "id": "olmo-3:instruct",
-    "family": "olmo-3",
-    "parameter_size": null
+    "id": "olmo-3:7b-instruct",
+    "family": "olmo3",
+    "parameter_size": "7.3B"
   },
-  "source": {},
+  "source": {
+    "provider": "ollama",
+    "repository": "olmo-3",
+    "url": "https://ollama.com/library/olmo-3"
+  },
   "runtime": {
-    "provider": null,
-    "connection_type": null
+    "provider": "ollama",
+    "connection_type": "local"
   },
   "artifact": {
-    "format": null,
-    "digest": null,
-    "size_bytes": null
+    "format": "gguf",
+    "digest": "ea72df8c85d75c6783ab0d00278803c53a634fc9d0fe38d3fd4ab6f35adbdbb2",
+    "size_bytes": 4472011552
   },
   "variant": {
     "instruction_tuned": true,
     "quantization": {
-      "enabled": false,
-      "bits": null,
-      "format": null
+      "enabled": true,
+      "bits": 4,
+      "format": "Q4_K_M"
     }
   },
   "capabilities": {
     "context_window": 65536,
-    "embedding_length": null,
-    "completion": null,
-    "tools": null,
+    "embedding_length": 4096,
+    "native": [
+      "completion",
+      "tools"
+    ],
+    "completion": true,
+    "tools": true,
     "thinking": false,
+    "vision": false,
     "structured_output": true
   }
 }

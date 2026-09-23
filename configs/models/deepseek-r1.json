@@ -2,34 +2,44 @@
   "schema_version": 2,
   "name": "deepseek-r1",
   "model": {
-    "id": "deepseek-r1",
-    "family": "deepseek-r1",
-    "parameter_size": null
+    "id": "deepseek-r1:latest",
+    "family": "qwen3",
+    "parameter_size": "8.2B"
   },
-  "source": {},
+  "source": {
+    "provider": "ollama",
+    "repository": "deepseek-r1",
+    "tag": "latest",
+    "url": "https://ollama.com/library/deepseek-r1"
+  },
   "runtime": {
-    "provider": null,
-    "connection_type": null
+    "provider": "ollama",
+    "connection_type": "local"
   },
   "artifact": {
-    "format": null,
-    "digest": null,
-    "size_bytes": null
+    "format": "gguf",
+    "digest": "6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763",
+    "size_bytes": 5225376047
   },
   "variant": {
     "instruction_tuned": false,
     "quantization": {
-      "enabled": false,
-      "bits": null,
-      "format": null
+      "enabled": true,
+      "bits": 4,
+      "format": "Q4_K_M"
     }
   },
   "capabilities": {
     "context_window": 131072,
-    "embedding_length": null,
-    "completion": null,
-    "tools": null,
+    "embedding_length": 4096,
+    "native": [
+      "completion",
+      "thinking"
+    ],
+    "completion": true,
+    "tools": false,
     "thinking": true,
-    "structured_output": true
+    "vision": false,
+    "structured_output": false
   }
 }

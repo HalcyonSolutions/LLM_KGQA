@@ -2,34 +2,43 @@
   "schema_version": 2,
   "name": "llama3.1-instruct-q4",
   "model": {
-    "id": "llama3.1:instruct-q4",
-    "family": "llama3.1",
-    "parameter_size": null
+    "id": "llama3.1:8b-instruct-q4_K_M",
+    "family": "llama",
+    "parameter_size": "8.0B"
   },
-  "source": {},
+  "source": {
+    "provider": "ollama",
+    "repository": "llama3.1",
+    "url": "https://ollama.com/library/llama3.1"
+  },
   "runtime": {
-    "provider": null,
-    "connection_type": null
+    "provider": "ollama",
+    "connection_type": "local"
   },
   "artifact": {
-    "format": null,
-    "digest": null,
-    "size_bytes": null
+    "format": "gguf",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "size_bytes": 4920753328
   },
   "variant": {
     "instruction_tuned": true,
     "quantization": {
       "enabled": true,
       "bits": 4,
-      "format": "Q4"
+      "format": "Q4_K_M"
     }
   },
   "capabilities": {
     "context_window": 131072,
-    "embedding_length": null,
-    "completion": null,
-    "tools": null,
+    "embedding_length": 4096,
+    "native": [
+      "completion",
+      "tools"
+    ],
+    "completion": true,
+    "tools": true,
     "thinking": false,
+    "vision": false,
     "structured_output": true
   }
 }
