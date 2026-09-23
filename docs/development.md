@@ -4,7 +4,7 @@
 
 ```text
 analysis/   result compilation, diagnostics, comparisons, and plotting
-configs/    backend configuration templates
+configs/    backend configuration templates and portable model profiles
 model/      shared and task-specific LLM clients
 scripts/    experiment, sample, sanity-check, and reproducibility scripts
 tests/      unit, integration, and behavior tests
@@ -23,6 +23,7 @@ The local `data/` and generated `results/` directories are not part of the check
 ## Model Clients
 
 - `model/base_llm_client.py`: shared LLM client functionality.
+- `model/model_config.py`: model-profile loading, schema validation, runtime capability checks, and backend-ID resolution.
 - `model/navigation_llm_client.py`: navigation prompts, parsing, and control logic.
 - `model/subgraph_llm_client.py`: subgraph prompt and prediction logic.
 - `model/tog_llm_client.py`: ToG-specific model interaction and selection logic.
