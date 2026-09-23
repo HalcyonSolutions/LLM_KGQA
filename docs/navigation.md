@@ -2,7 +2,7 @@
 
 The iterative navigation workflow treats the language model as a question-conditioned graph-action policy. At each hop, the environment exposes legal outgoing actions from the current entity, the model selects an action, and the controller validates and executes only edges that exist in the local knowledge graph.
 
-The main entry point is `kgqa_navigation.py`.
+The main entry point is `kgqa_navigation.py`. Model identity and deployment metadata are supplied through a validated JSON profile under `configs/models/`; `--model-id` can override only the server-specific API identifier.
 
 ## Basic Usage
 
@@ -10,8 +10,7 @@ The main entry point is `kgqa_navigation.py`.
 python ./kgqa_navigation.py \
   --dataset mquake_single \
   --hops n \
-  --llm-model qwen2.5 \
-  --use-instruct \
+  --model-config configs/models/qwen2.5-instruct-q4.json \
   --navigation-approach tuple \
   --memory-approach full \
   --prompting-approach zero-shot \
