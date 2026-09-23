@@ -148,6 +148,25 @@ Subgraph sampling modes:
 
 Use `-r` / `--retrieve` for non-oracle retrieval from the source node.
 
+### Reproducing the Paper Experiments
+
+The experiment scripts used to reproduce the main results reported in the paper are provided under `scripts/`.
+
+Tables 2 and 3, covering the one-shot navigation results and the zero-shot versus one-shot comparison, can be reproduced with:
+
+```bash
+bash scripts/kgqa_navigation_runs.sh
+```
+
+Table 4, covering the Think-on-Graph (ToG)-style search comparison, can be reproduced with:
+
+```bash
+bash scripts/kgqa_tog_runs.sh
+```
+
+These scripts contain the model, dataset, prompting, navigation, and inference settings used for the reported experiments. Run them from the repository root.
+
+
 ### Experiment and Utility Scripts
 
 Commands are intended to be run from the repository root.
