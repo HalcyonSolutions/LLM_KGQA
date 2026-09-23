@@ -9,7 +9,7 @@ import sys
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT_DIR)
 
-from model.constants import valid_models
+from model.model_config import list_model_profile_names
 
 import matplotlib.pyplot as plt
 
@@ -22,8 +22,8 @@ def parse_args():
     parser.add_argument('--hops', type=str, default='n',
                         help='Number of hops for subgraph extraction.')
     
-    parser.add_argument('--llm-models', type=str, nargs='+', default=valid_models,
-                        help='Models to include in the plot.')
+    parser.add_argument('--llm-models', type=str, nargs='+', default=list_model_profile_names(os.path.join(ROOT_DIR, 'configs', 'models')),
+                        help='Model profile names to include in the plot.')
     
     parser.add_argument('--seed', type=int, default=42,
                         help='Random seed used in the experiments.')
@@ -42,13 +42,6 @@ def parse_args():
                         help='Directory to save the results.')
     parser.add_argument('--plot-dir', type=str, default='./plots',
                         help='Directory to save the plots.')
-    
-    parser.add_argument('--use-instruct', action='store_true',
-                        help='Whether to use the instruction-tuned version of the model.')
-    parser.add_argument('--use-quantized', action='store_true',
-                        help='Whether to use the quantized version of the model.')
-    parser.add_argument('--quantization-bits', type=int, default=4,
-                        help='Number of bits for quantization (if using quantized model).')
     
     # plotting parameters
     parser.add_argument('--metric-yaxis', type=str, default='avg_accuracy',
@@ -71,10 +64,6 @@ if __name__ == "__main__":
 
     for llm_model in args.llm_models:
         model_name = llm_model
-        if args.use_instruct:
-            model_name += "-instruct"
-            if args.use_quantized:
-                model_name += f"-q{args.quantization_bits}"
         results[llm_model] = {args.metric_yaxis: [], args.metric_xaxis: []}
         for size in args.subgraph_size:
             sampling_str = args.sampling_method if size is not None else 'evidence'
