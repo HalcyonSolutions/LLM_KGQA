@@ -245,3 +245,15 @@ def model_result_config(
         "quantization_bits": profile.quantization_bits,
         "model_profile": profile.to_dict(),
     }
+
+
+def list_model_profile_names(directory: str | Path = "configs/models") -> list[str]:
+    """Return validated, filesystem-safe model profile names from a directory."""
+    profile_dir = Path(directory)
+    if not profile_dir.is_dir():
+        raise ModelProfileError(f"Model profile directory does not exist: {profile_dir}")
+
+    names = []
+    for path in sorted(profile_dir.glob("*.json")):
+        names.append(load_model_profile(path).result_name)
+    return names
