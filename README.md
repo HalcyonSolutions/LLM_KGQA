@@ -195,17 +195,17 @@ Detailed documentation is available under [docs/](docs/README.md):
 If you use this repository, please cite:
 
 ```bibtex
-@misc{hernandez2026path,
+@article{hernandez2026path,
   title         = {The Path Matters: Evaluating Small Language Models Beyond Answer Accuracy in KGQA},
   author        = {Eduin E. Hernandez and Sergio A. Diaz and Luis F. Garcia and Nurassyl Askar and Stefano Rini},
   year          = {2026},
-  eprint        = {2609.27669},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.CL},
-  url           = {https://arxiv.org/abs/2609.27669}
+  journal       = {arXiv preprint arXiv:2609.27669}
 }
 ```
 
 ## License
 
-This project is licensed under the Academic License.
+This project is licensed under the [Apache License 2.0](LICENSE).
+
+Third-party datasets, model weights, and other external resources remain
+subject to their respective licenses and terms of use.
