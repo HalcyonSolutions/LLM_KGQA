@@ -43,13 +43,13 @@ Models are configured through validated JSON profiles under `configs/models/` ra
 A profile records the backend model ID, model family, instruct/quantization metadata, context-window limit, and declared capabilities. Select one with:
 
 ```bash
---model-config configs/models/qwen2.5-instruct-q4.json
+--model-config configs/models/qwen3.json
 ```
 
 If another server exposes the same deployed model under a different ID, override only the API-facing identifier:
 
 ```bash
---model-config configs/models/qwen2.5-instruct-q4.json \
+--model-config configs/models/qwen3.json \
 --model-id my-server-model-alias
 ```
 

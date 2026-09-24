@@ -10,7 +10,7 @@ The main entry point is `kgqa_navigation.py`. Model identity and deployment meta
 python ./kgqa_navigation.py \
   --dataset mquake_single \
   --hops n \
-  --model-config configs/models/qwen2.5-instruct-q4.json \
+  --model-config configs/models/qwen3.json \
   --navigation-approach tuple \
   --memory-approach full \
   --prompting-approach zero-shot \

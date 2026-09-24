@@ -10,7 +10,7 @@ The main entry point is `kgqa_subgraph.py`. These utilities are retained from th
 python ./kgqa_subgraph.py \
   --dataset mquake_single \
   --hops n \
-  --model-config configs/models/qwen2.5-instruct-q4.json \
+  --model-config configs/models/qwen3.json \
   --sampling-method neighborhood \
   --subgraph-size 50 \
   --max-depth 3 \
