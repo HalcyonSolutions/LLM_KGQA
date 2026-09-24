@@ -9,8 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "ministral-3",
-    "tag": "latest",
-    "url": "https://ollama.com/library/ministral-3"
+    "url": "https://ollama.com/library/ministral-3:8b"
   },
   "runtime": {
     "provider": "ollama",

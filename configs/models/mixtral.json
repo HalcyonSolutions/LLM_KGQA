@@ -9,8 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "mixtral",
-    "tag": "latest",
-    "url": "https://ollama.com/library/mixtral"
+    "url": "https://ollama.com/library/mixtral:8x7b"
   },
   "runtime": {
     "provider": "ollama",

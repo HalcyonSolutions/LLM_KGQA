@@ -9,8 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "qwen3",
-    "tag": "latest",
-    "url": "https://ollama.com/library/qwen3"
+    "url": "https://ollama.com/library/qwen3:8b"
   },
   "runtime": {
     "provider": "ollama",

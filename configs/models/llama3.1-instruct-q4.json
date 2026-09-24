@@ -9,7 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "llama3.1",
-    "url": "https://ollama.com/library/llama3.1"
+    "url": "https://ollama.com/library/llama3.1:8b-instruct-q4_K_M"
   },
   "runtime": {
     "provider": "ollama",

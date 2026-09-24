@@ -9,7 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "olmo-3",
-    "url": "https://ollama.com/library/olmo-3"
+    "url": "https://ollama.com/library/olmo-3:7b-instruct"
   },
   "runtime": {
     "provider": "ollama",

@@ -9,8 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "phi4-mini",
-    "tag": "latest",
-    "url": "https://ollama.com/library/phi4-mini"
+    "url": "https://ollama.com/library/phi4-mini:3.8b"
   },
   "runtime": {
     "provider": "ollama",

@@ -9,8 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "llama3",
-    "tag": "latest",
-    "url": "https://ollama.com/library/llama3"
+    "url": "https://ollama.com/library/llama3:8b"
   },
   "runtime": {
     "provider": "ollama",

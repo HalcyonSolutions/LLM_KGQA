@@ -9,8 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "deepseek-coder",
-    "tag": "latest",
-    "url": "https://ollama.com/library/deepseek-coder"
+    "url": "https://ollama.com/library/deepseek-coder:1.3b"
   },
   "runtime": {
     "provider": "ollama",

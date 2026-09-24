@@ -9,7 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "qwen2.5",
-    "url": "https://ollama.com/library/qwen2.5"
+    "url": "https://ollama.com/library/qwen2.5:7b-instruct-q4_K_M"
   },
   "runtime": {
     "provider": "ollama",

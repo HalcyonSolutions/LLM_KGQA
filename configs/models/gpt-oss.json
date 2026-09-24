@@ -9,8 +9,7 @@
   "source": {
     "provider": "ollama",
     "repository": "gpt-oss",
-    "tag": "latest",
-    "url": "https://ollama.com/library/gpt-oss"
+    "url": "https://ollama.com/library/gpt-oss:20b"
   },
   "runtime": {
     "provider": "ollama",
