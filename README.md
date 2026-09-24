@@ -97,7 +97,7 @@ See [docs/reproducibility.md](docs/reproducibility.md) for the exact configurati
 python ./kgqa_navigation.py \
   --dataset mquake_single \
   --hops n \
-  --model-config configs/models/qwen2.5-instruct-q4.json \
+  --model-config configs/models/qwen3.json \
   --navigation-approach tuple \
   --memory-approach full \
   --prompting-approach zero-shot \
@@ -129,7 +129,7 @@ See [docs/tog.md](docs/tog.md) for the upstream revision, search procedure, fall
 python ./kgqa_subgraph.py \
   --dataset mquake_single \
   --hops n \
-  --model-config configs/models/qwen2.5-instruct-q4.json \
+  --model-config configs/models/qwen3.json \
   --sampling-method neighborhood \
   --subgraph-size 50 \
   --max-depth 3 \
