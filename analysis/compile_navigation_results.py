@@ -99,16 +99,7 @@ def model_name(config):
     """
     Produce the same readable model name used by the runner.
     """
-    name = config["model"]
-
-    if config.get("use_instruct"):
-        name += "-instruct"
-
-    if config.get("use_quantized"):
-        bits = config.get("quantization_bits")
-        name += f"-q{bits}"
-
-    return name
+    return config.get("model_profile_name", config["model"])
 
 
 def output_format(config):
