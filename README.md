@@ -24,96 +24,17 @@ pip install -r requirements.txt
 
 ### Backend Setup
 
-The experiments can use either **Ollama directly** or **Open WebUI backed by Ollama**.
+The experiments support either **Ollama directly** or **Open WebUI backed by Ollama**.
 
-#### 1. Install Ollama and download a model
-
-Install Ollama from [ollama.com/download](https://ollama.com/download). Ollama normally exposes its local API at `http://localhost:11434`.
-
-Download the exact model variant referenced by a model profile. For example:
-
-```bash
-ollama pull qwen3:8b
-```
-
-Confirm that it is installed:
-
-```bash
-ollama list
-```
-
-The model ID reported by Ollama should match the profile's `model.id` whenever possible. If your server uses a different alias, the runners also accept `--model-id`.
-
-#### 2. Choose a backend
-
-A configuration template is provided at:
-
-```text
-configs/openwebui_template.json
-```
-
-Copy it before editing:
+Copy the provided backend configuration template before running the experiments:
 
 ```bash
 cp configs/openwebui_template.json configs/openwebui_config.json
 ```
 
-`configs/openwebui_config.json` is local configuration and should not be committed.
+Then configure the selected backend and make sure the model referenced by your model profile is available.
 
-##### Direct Ollama
-
-For the simplest local setup, call Ollama directly:
-
-```json
-{
-  "backend": "ollama",
-  "ollama_url": "http://localhost:11434"
-}
-```
-
-No API key is required in direct Ollama mode.
-
-##### Open WebUI
-
-[Open WebUI](https://github.com/open-webui/open-webui) provides a browser interface and an authenticated API in front of Ollama. Follow the [official installation guide](https://docs.openwebui.com/getting-started/quick-start/) to install it. The Docker quick start exposes Open WebUI at `http://localhost:3000`; a Python installation commonly uses `http://localhost:8080`.
-
-After Open WebUI is running:
-
-1. Open **Settings > Admin > Connections**.
-2. Under **Manage Ollama API Connections**, connect the Ollama instance. If Open WebUI runs directly on the same host, this is usually `http://localhost:11434`. If Open WebUI runs in Docker while Ollama runs on the host, use the host address recommended by the Open WebUI documentation (commonly `http://host.docker.internal:11434`).
-3. Open **Manage** on the Ollama connection to verify that the downloaded model is visible. Models can also be downloaded from this panel or directly from the model selector.
-4. If the connection uses a **Model IDs** filter, either leave it empty to expose all models from that Ollama instance or add the exact model ID used by the profile.
-5. Under **Settings > Admin > Models**, make sure the model is enabled and visible to the users who will run the experiments. Adjust public/group access if the Open WebUI instance is shared.
-
-For example, after pulling `qwen3:8b`, that exact model ID should be available through Open WebUI before running a profile whose `model.id` is `qwen3:8b`.
-
-#### 3. Enable and create an Open WebUI API key
-
-API keys are disabled globally unless an administrator enables them:
-
-1. Log in as an Open WebUI administrator.
-2. Go to **Settings > Admin > Authentication**.
-3. Enable **API Keys** and save the settings.
-4. For non-admin accounts, also grant the **API Keys** feature permission through the appropriate user/group permissions.
-5. Open your profile menu and go to **Settings > Account**.
-6. In the **API keys** section, click **Show**, then **Create new secret key**.
-7. Copy the generated key and keep it private.
-
-Do not commit an Open WebUI API key to the repository.
-
-Configure the repository to use Open WebUI:
-
-```json
-{
-  "backend": "openwebui",
-  "base_url": "http://localhost:8080",
-  "api_key": "sk-<OPENWEBUI_API_KEY>"
-}
-```
-
-Set `base_url` to the URL at which your Open WebUI instance is actually reachable (for example, `http://localhost:3000` for the standard Docker quick start).
-
-You can then verify model access through the repository by running one of the sample or sanity-check commands below.
+See [docs/backend.md](docs/backend.md) for Ollama installation/model downloads, Open WebUI model availability, connection settings, and API-key setup.
 
 ### Model Profiles
 

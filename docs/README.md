@@ -4,6 +4,7 @@ This directory contains the detailed documentation for the KGQA workflows implem
 
 ## Guides
 
+- [Backend Setup](backend.md): Ollama/Open WebUI installation, model availability, backend configuration, and API-key setup.
 - [Model Profiles](../configs/models/README.md): portable model IDs, variant metadata, capabilities, validation, and server-specific overrides.
 
 - [Navigation](navigation.md): iterative graph navigation, prompting, memory, action selection, and context handling.
@@ -14,4 +15,4 @@ This directory contains the detailed documentation for the KGQA workflows implem
 - [Results and Analysis](results.md): output structure, metrics, and analysis utilities.
 - [Development](development.md): repository architecture, key modules, tests, and development tools.
 
-For installation, backend configuration, and the shortest path to reproducing the paper results, start with the repository [README](../README.md).
+For the shortest path to reproducing the paper results, start with the repository [README](../README.md).
