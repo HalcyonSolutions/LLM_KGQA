@@ -2,106 +2,63 @@
 
 # Evaluation on MQuAKE (zero-shot, original navigation)
 python ./kgqa_navigation.py \
+    --model-config configs/models/qwen3.json \
     --dataset mquake_single \
     --hops n \
     --max-navigation-steps 4 \
+    --prompting-approach zero-shot \
     --max-actions 200 \
     --context-window 32768 \
-    --model-config configs/models/qwen2.5-instruct-q4.json \
     --navigation-approach tuple \
     --memory-approach full \
-    --prompting-approach zero-shot \
-    --timeout 15
-
-# Evaluation on MQuAKE (one-shot, original navigation)
-python ./kgqa_navigation.py \
-    --dataset mquake_single \
-    --hops n \
-    --max-navigation-steps 4 \
-    --n-shots 1 \
-    --demo-history-mode full \
-    --demo-max-actions 5 \
-    --max-actions 200 \
-    --context-window 32768 \
-    --model-config configs/models/qwen2.5-instruct-q4.json \
-    --navigation-approach tuple \
-    --memory-approach full \
-    --prompting-approach one-shot \
-    --timeout 15
-
-# Evaluation on MQuAKE (zero-shot, hybrid navigation)
-python ./kgqa_navigation.py \
-    --dataset mquake_single \
-    --hops n \
-    --max-navigation-steps 4 \
-    --max-actions 200 \
-    --context-window 32768 \
-    --model-config configs/models/qwen2.5-instruct-q4.json \
-    --navigation-approach hybrid \
-    --memory-approach full \
-    --prompting-approach zero-shot \
-    --timeout 15
-
-# Evaluation on Kinship (zero-shot, original navigation)
-python ./kgqa_navigation.py \
-    --dataset kinship \
-    --hops n \
-    --max-navigation-steps 3 \
-    --model-config configs/models/qwen2.5-instruct-q4.json \
-    --navigation-approach tuple \
-    --memory-approach full \
-    --prompting-approach zero-shot \
-    --timeout 15
-
-python ./kgqa_navigation.py \
-    --dataset mquake_multi \
-    --hops n \
-    --max-navigation-steps 4 \
-    --n-shots 1 \
-    --demo-history-mode full \
-    --demo-max-actions 5 \
-    --max-actions 200 \
-    --context-window 32768 \
-    --model-config configs/models/gemma4.json \
+    --result-dir ./results/navigation \
+    --seed 42 \
+    --temperature 0 \
+    --timeout-cooldown 0 \
+    --max-parse-retries 0 \
     --structured-output \
-    --navigation-approach tuple \
-    --memory-approach full \
-    --prompting-approach one-shot \
     --timeout 15 \
     --max-questions 10
 
+# Evaluation on MQuAKE (one-shot, original navigation)
 python ./kgqa_navigation.py \
+    --model-config configs/models/qwen3.json \
     --dataset mquake_single \
     --hops n \
     --max-navigation-steps 4 \
+    --prompting-approach one-shot \
     --n-shots 1 \
     --demo-history-mode full \
     --demo-max-actions 5 \
     --max-actions 200 \
     --context-window 32768 \
-    --model-config configs/models/deepseek-r1.json \
     --navigation-approach tuple \
     --memory-approach full \
-    --prompting-approach one-shot \
-    --timeout 15
+    --result-dir ./results/navigation \
+    --seed 42 \
+    --temperature 0 \
+    --timeout-cooldown 0 \
+    --max-parse-retries 0 \
+    --structured-output \
+    --timeout 15 \
+    --max-questions 10
 
+# Evaluation using MQuAKE (ToG-style navigation)
 python kgqa_tog.py \
+    --model-config configs/models/qwen3.json \
     --dataset mquake_single \
     --hops n \
-    --split test \
-    --model-config configs/models/ministral-3-instruct-q4.json \
     --width 3 \
     --max-depth 4 \
-    --bidirectional \
     --neighborhood-threshold 20 \
     --num-retain-entity 5 \
     --context-window 32768 \
     --max-output-tokens 256 \
-    --temperature 0 \
+    --result-dir ./results/tog \
+    --checkpoint-every 10 \
     --seed 42 \
-    --timeout 15 \
+    --temperature 0 \
     --connect-timeout 5 \
     --max-parse-retries 0 \
-    --checkpoint-every 10 \
-    --result-dir ./results/tog \
+    --timeout 15 \
     --max-questions 10
