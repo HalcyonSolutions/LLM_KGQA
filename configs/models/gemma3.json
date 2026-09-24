@@ -38,7 +38,7 @@
     "completion": true,
     "tools": false,
     "thinking": false,
-    "vision": false,
+    "vision": true,
     "structured_output": true
   }
 }

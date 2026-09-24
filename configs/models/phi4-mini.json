@@ -22,7 +22,7 @@
     "size_bytes": 2491876774
   },
   "variant": {
-    "instruction_tuned": false,
+    "instruction_tuned": true,
     "quantization": {
       "enabled": true,
       "bits": 4,

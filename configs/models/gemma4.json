@@ -40,7 +40,7 @@
     "completion": true,
     "tools": true,
     "thinking": true,
-    "vision": false,
+    "vision": true,
     "structured_output": true
   }
 }
