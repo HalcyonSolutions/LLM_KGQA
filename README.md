@@ -59,11 +59,47 @@ See [configs/models/README.md](configs/models/README.md) for the profile schema 
 
 The paper evaluates the navigation-ready **KINSHIP** and **MQuAKE-ST** resources, including the Single Answer and Multi Answer MQuAKE-ST settings.
 
-Dataset releases, preparation details, and associated THESEUS resources are maintained in the [THESEUS repository](https://github.com/HalcyonSolutions/THESEUS). For paper reproduction, use the dataset versions distributed through THESEUS.
+Dataset releases, preparation details, and associated THESEUS resources are maintained in the [THESEUS repository](https://github.com/HalcyonSolutions/THESEUS). The processed datasets are also available from Hugging Face:
 
-Local datasets are expected under `data/<dataset_name>/`. The `data/` directory is not part of the checked-in repository tree.
+- [HalcyonSolutions/Kinship](https://huggingface.co/datasets/HalcyonSolutions/Kinship)
+- [HalcyonSolutions/MQuAKE-ST](https://huggingface.co/datasets/HalcyonSolutions/MQuAKE-ST)
 
-See [docs/datasets.md](docs/datasets.md) for the expected file layout and optional entity/relation mappings.
+### Dataset Preparation
+
+The preprocessing scripts expect the downloaded releases under `raw_data/` and copy the files required by the experiment runners into `data/`. The scripts do not download the datasets themselves.
+
+Using the Hugging Face CLI, the expected raw layouts can be created with:
+
+```bash
+hf download HalcyonSolutions/Kinship \
+  --repo-type dataset \
+  --local-dir ./raw_data/kinship_hinton
+
+hf download HalcyonSolutions/MQuAKE-ST \
+  --repo-type dataset \
+  --local-dir ./raw_data/mquake_st_dataset
+```
+
+Equivalent dataset downloads from Google Cloud Storage can be placed in the same `raw_data/` directories.
+
+Then preprocess both datasets from the repository root:
+
+```bash
+bash scripts/preprocess_kinship.sh
+bash scripts/preprocess_mquake_st.sh
+```
+
+This creates the runner-ready datasets under:
+
+```text
+data/kinship/
+data/mquake_single/
+data/mquake_multi/
+```
+
+Both `raw_data/` and `data/` are local working directories and are excluded from version control.
+
+See [docs/datasets.md](docs/datasets.md) for the expected processed file layout and optional entity/relation mappings.
 
 ## Reproducing the Paper Experiments
 
