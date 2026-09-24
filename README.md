@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository is the **official implementation** for the paper **“The Path Matters: Evaluating Small Language Models Beyond Answer Accuracy in KGQA”** by Eduin E. Hernandez, Sergio A. Diaz, Luis F. Garcia, Nurassyl Askar, and Stefano Rini.
+This repository is the **official implementation** for the paper **“The Path Matters: Evaluating Small Language Models Beyond Answer Accuracy in KGQA”** by Eduin E. Hernandez, Sergio A. Diaz, Luis F. Garcia, Nurassyl Askar, and Stefano Rini. The preprint is available on [arXiv:2609.27669](https://arxiv.org/abs/2609.27669).
 
 The paper evaluates frozen, locally deployable small language models (SLMs) as question-conditioned graph-navigation policies, measuring terminal-answer accuracy together with executed-path fidelity. It also includes a Think-on-Graph (ToG)-style comparison to study the effect of explicit search and answer-generation scaffolding.
 
@@ -189,6 +189,22 @@ Detailed documentation is available under [docs/](docs/README.md):
 - [Reproducibility](docs/reproducibility.md)
 - [Results and Analysis](docs/results.md)
 - [Development](docs/development.md)
+
+## Citation
+
+If you use this repository, please cite:
+
+```bibtex
+@misc{hernandez2026path,
+  title         = {The Path Matters: Evaluating Small Language Models Beyond Answer Accuracy in KGQA},
+  author        = {Eduin E. Hernandez and Sergio A. Diaz and Luis F. Garcia and Nurassyl Askar and Stefano Rini},
+  year          = {2026},
+  eprint        = {2609.27669},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2609.27669}
+}
+```
 
 ## License
 
