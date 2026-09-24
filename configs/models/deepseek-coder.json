@@ -2,34 +2,43 @@
   "schema_version": 2,
   "name": "deepseek-coder",
   "model": {
-    "id": "deepseek-coder",
-    "family": "deepseek-coder",
-    "parameter_size": null
+    "id": "deepseek-coder:latest",
+    "family": "llama",
+    "parameter_size": "1B"
   },
-  "source": {},
+  "source": {
+    "provider": "ollama",
+    "repository": "deepseek-coder",
+    "tag": "latest",
+    "url": "https://ollama.com/library/deepseek-coder"
+  },
   "runtime": {
-    "provider": null,
-    "connection_type": null
+    "provider": "ollama",
+    "connection_type": "local"
   },
   "artifact": {
-    "format": null,
-    "digest": null,
-    "size_bytes": null
+    "format": "gguf",
+    "digest": "3ddd2d3fc8d2b5fe039d18f859271132fd9c7960ef0be1864984442dc2a915d3",
+    "size_bytes": 776080839
   },
   "variant": {
     "instruction_tuned": false,
     "quantization": {
-      "enabled": false,
-      "bits": null,
-      "format": null
+      "enabled": true,
+      "bits": 4,
+      "format": "Q4_0"
     }
   },
   "capabilities": {
-    "context_window": 32768,
-    "embedding_length": null,
-    "completion": null,
-    "tools": null,
+    "context_window": 16384,
+    "embedding_length": 2048,
+    "native": [
+      "completion"
+    ],
+    "completion": true,
+    "tools": false,
     "thinking": false,
+    "vision": false,
     "structured_output": true
   }
 }

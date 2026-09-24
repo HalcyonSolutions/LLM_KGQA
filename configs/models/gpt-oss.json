@@ -2,34 +2,45 @@
   "schema_version": 2,
   "name": "gpt-oss",
   "model": {
-    "id": "gpt-oss",
-    "family": "gpt-oss",
-    "parameter_size": null
+    "id": "gpt-oss:latest",
+    "family": "gptoss",
+    "parameter_size": "20.9B"
   },
-  "source": {},
+  "source": {
+    "provider": "ollama",
+    "repository": "gpt-oss",
+    "tag": "latest",
+    "url": "https://ollama.com/library/gpt-oss"
+  },
   "runtime": {
-    "provider": null,
-    "connection_type": null
+    "provider": "ollama",
+    "connection_type": "local"
   },
   "artifact": {
-    "format": null,
-    "digest": null,
-    "size_bytes": null
+    "format": "gguf",
+    "digest": "17052f91a42e97930aa6e28a6c6c06a983e6a58dbb00434885a0cf5313e376f7",
+    "size_bytes": 13793441244
   },
   "variant": {
     "instruction_tuned": false,
     "quantization": {
-      "enabled": false,
-      "bits": null,
-      "format": null
+      "enabled": true,
+      "bits": 4,
+      "format": "MXFP4"
     }
   },
   "capabilities": {
     "context_window": 131072,
-    "embedding_length": null,
-    "completion": null,
-    "tools": null,
+    "embedding_length": 2880,
+    "native": [
+      "completion",
+      "tools",
+      "thinking"
+    ],
+    "completion": true,
+    "tools": true,
     "thinking": true,
-    "structured_output": true
+    "vision": false,
+    "structured_output": false
   }
 }

@@ -2,34 +2,43 @@
   "schema_version": 2,
   "name": "llama3",
   "model": {
-    "id": "llama3",
-    "family": "llama3",
-    "parameter_size": null
+    "id": "llama3:latest",
+    "family": "llama",
+    "parameter_size": "8.0B"
   },
-  "source": {},
+  "source": {
+    "provider": "ollama",
+    "repository": "llama3",
+    "tag": "latest",
+    "url": "https://ollama.com/library/llama3"
+  },
   "runtime": {
-    "provider": null,
-    "connection_type": null
+    "provider": "ollama",
+    "connection_type": "local"
   },
   "artifact": {
-    "format": null,
-    "digest": null,
-    "size_bytes": null
+    "format": "gguf",
+    "digest": "365c0bd3c000a25d28ddbf732fe1c6add414de7275464c4e4d1c3b5fcb5d8ad1",
+    "size_bytes": 4661224676
   },
   "variant": {
     "instruction_tuned": false,
     "quantization": {
-      "enabled": false,
-      "bits": null,
-      "format": null
+      "enabled": true,
+      "bits": 4,
+      "format": "Q4_0"
     }
   },
   "capabilities": {
     "context_window": 8192,
-    "embedding_length": null,
-    "completion": null,
-    "tools": null,
+    "embedding_length": 4096,
+    "native": [
+      "completion"
+    ],
+    "completion": true,
+    "tools": false,
     "thinking": false,
+    "vision": false,
     "structured_output": true
   }
 }
