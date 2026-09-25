@@ -4,7 +4,11 @@
 
 This repository is the **official implementation** for the paper **“The Path Matters: Evaluating Small Language Models Beyond Answer Accuracy in KGQA”** by Eduin E. Hernandez, Sergio A. Diaz, Luis F. Garcia, Nurassyl Askar, and Stefano Rini. The preprint is available on [arXiv:2609.27669](https://arxiv.org/abs/2609.27669).
 
-The paper evaluates frozen, locally deployable small language models (SLMs) as question-conditioned graph-navigation policies, measuring terminal-answer accuracy together with executed-path fidelity. It also includes a Think-on-Graph (ToG)-style comparison to study the effect of explicit search and answer-generation scaffolding.
+The paper evaluates frozen, locally deployable small language models (SLMs) as **question-conditioned graph-navigation policies**, measuring terminal-answer accuracy together with executed-path fidelity. It also includes a Think-on-Graph (ToG)-style comparison to study the effect of explicit search and answer-generation scaffolding.
+
+![Iterative SLM-based knowledge graph navigation](images/iterative_navigation.png)
+
+*In the primary experimental setting, an SLM navigates the knowledge graph iteratively by selecting among the executable graph actions available at each step and deciding when to stop.*
 
 The repository supports three KGQA workflows:
 
